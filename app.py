@@ -223,90 +223,116 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
 }
 
 /* ============================================================================
-   SWITCH ENCRYPT / DECRYPT
+   SWITCH ENCRYPT / DECRYPT (DI TENGAH, UKURAN BESAR)
    ============================================================================ */
-div[data-testid="stRadio"] { display: flex; justify-content: center; margin: 0.5rem 0 1.6rem 0; }
+.st-key-switchwrap {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 0.5rem 0 2rem 0;
+}
+.st-key-switchwrap [data-testid="stElementContainer"],
+.st-key-switchwrap div[data-testid="stRadio"] {
+    width: auto !important;
+    margin: 0 auto !important;
+    display: flex;
+    justify-content: center;
+}
 
 div[data-testid="stRadio"] > div[role="radiogroup"] {
     position: relative;
-    display: inline-flex !important;
+    box-sizing: border-box;
+    display: flex !important;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
     gap: 0 !important;
+    width: 420px;
+    max-width: 92vw;
     background: rgba(15, 17, 24, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 999px;
-    padding: 6px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(0, 0, 0, 0.6);
+    padding: 7px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(0, 0, 0, 0.6);
     isolation: isolate;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"]:hover {
+    border-color: rgba(255, 255, 255, 0.34);
 }
 
-/* Kapsul yang bergeser (berada DI BELAKANG label) */
+/* Kapsul yang bergeser: persis setengah dari area dalam, di belakang label */
 div[data-testid="stRadio"] > div[role="radiogroup"]::before {
     content: "";
     position: absolute;
-    top: 6px; left: 6px;
-    width: 160px;
-    height: calc(100% - 12px);
+    top: 7px; bottom: 7px; left: 7px;
+    width: calc(50% - 7px);
     border-radius: 999px;
     z-index: -1;
     pointer-events: none;
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.45s ease, box-shadow 0.45s ease;
 }
-
 div[data-testid="stRadio"] > div[role="radiogroup"]:has(label:nth-of-type(1) input:checked)::before {
     transform: translateX(0);
     background: linear-gradient(135deg, #ff5500 0%, #ff8533 100%);
-    box-shadow: 0 0 26px rgba(255, 94, 20, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+    box-shadow: 0 0 28px rgba(255, 94, 20, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
-
 div[data-testid="stRadio"] > div[role="radiogroup"]:has(label:nth-of-type(2) input:checked)::before {
-    transform: translateX(160px);
+    transform: translateX(100%);
     background: linear-gradient(135deg, #38bdf8 0%, #818cf8 60%, #a5b4fc 100%);
-    box-shadow: 0 0 26px rgba(56, 189, 248, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.55);
+    box-shadow: 0 0 28px rgba(56, 189, 248, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.55);
 }
 
 div[data-testid="stRadio"] > div[role="radiogroup"] > label {
     position: relative;
-    width: 160px;
-    justify-content: center;
-    align-items: center;
+    flex: 1 1 0 !important;
+    width: 50% !important;
+    min-width: 0;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
     margin: 0 !important;
-    padding: 11px 0 !important;
+    padding: 15px 0 !important;
     border-radius: 999px;
     cursor: pointer;
     background: transparent !important;
 }
 
-div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child { display: none !important; }
-
-div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:last-child {
-    width: 100%; display: flex; justify-content: center;
+/* Sembunyikan bulatan radio bawaan apa pun versinya; hanya teks yang tampil */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label > *:not(input):not(:has([data-testid="stMarkdownContainer"])) {
+    display: none !important;
+}
+div[data-testid="stRadio"] > div[role="radiogroup"] > label > *:has([data-testid="stMarkdownContainer"]) {
+    width: 100%;
+    display: flex !important;
+    justify-content: center;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 div[data-testid="stRadio"] > div[role="radiogroup"] > label p {
-    font-size: 0.95rem !important;
+    font-size: 1.08rem !important;
     font-weight: 600 !important;
     color: var(--silver-3) !important;
     margin: 0 !important;
+    text-align: center;
     transition: color 0.3s ease, transform 0.25s ease;
 }
-
-/* Hover pada tombol yang belum aktif: teks menyala + sedikit membesar */
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover p {
     color: #ffffff !important;
-    transform: scale(1.06);
+    transform: scale(1.07);
 }
-
 div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) p {
     color: #ffffff !important;
     font-weight: 700 !important;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
 
-/* Efek hover pada seluruh switch: cahaya mengikuti sisi yang disorot */
-div[data-testid="stRadio"] > div[role="radiogroup"]:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-}
+/* Hilangkan ikon tautan di judul & rapikan teks agar semuanya di tengah */
+h1 a, h2 a, h3 a, h4 a, [data-testid="stHeaderActionElements"] { display: none !important; }
+.sec-head, .info-card { text-align: center; }
+.info-card .step { margin-left: auto; margin-right: auto; }
+.info-card h4 { text-align: center; }
 
 /* ============================================================================
    KARTU (st.container(key="card_...")) 
@@ -698,13 +724,14 @@ st.markdown(
 # ==============================================================================
 # 7. SWITCH ENCRYPT / DECRYPT
 # ==============================================================================
-selected_mode = st.radio(
-    "Pilih Mode",
-    options=["Encrypt", "Decrypt"],
-    horizontal=True,
-    label_visibility="collapsed",
-    key="mode_selector",
-)
+with st.container(key="switchwrap"):
+  selected_mode = st.radio(
+      "Pilih Mode",
+      options=["Encrypt", "Decrypt"],
+      horizontal=True,
+      label_visibility="collapsed",
+      key="mode_selector",
+  )
 
 # Tema biru untuk mode Decrypt (tanpa membungkus widget)
 st.markdown(
