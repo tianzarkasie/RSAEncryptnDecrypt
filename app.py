@@ -3,245 +3,448 @@ import random
 import streamlit as st
 
 # ==============================================================================
-# KONFIGURASI HALAMAN & CUSTOM CSS
+# 1. KONFIGURASI HALAMAN
 # ==============================================================================
 st.set_page_config(
-    page_title="RSA Cryptography Studio | Kriptografi",
-    page_icon="🔐",
+    page_title="RSA Encrypt & Decrypt",
+    page_icon="🟠",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
 
+# ==============================================================================
+# 2. CUSTOM CSS (OBSIDIAN BLACK + GLOWING ORANGE + METALLIC SILVER + PARALLAX BLUR)
+# ==============================================================================
 st.markdown(
     """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-    --bg-main: #0b0f19;
-    --bg-card: #111827;
-    --bg-card-hover: #162033;
-    --bg-sub: #0d1322;
-    --border-subtle: rgba(148, 163, 184, 0.16);
-    --accent-enc: #38bdf8;
-    --accent-enc-glow: rgba(56, 189, 248, 0.22);
-    --accent-dec: #a78bfa;
-    --accent-dec-glow: rgba(167, 139, 250, 0.22);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
+    --bg-obsidian: #07080b;
+    --orange-core: #ff5e14;
+    --orange-bright: #ff8533;
+    --orange-glow: rgba(255, 94, 20, 0.45);
+    --silver-light: #f1f5f9;
+    --silver-mid: #94a3b8;
+    --silver-dark: #475569;
+    --glass-surface: rgba(12, 14, 20, 0.72);
+    --glass-border: rgba(226, 232, 240, 0.14);
 }
 
+/* Reset & Base */
 html, body, [class*="css"] {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-obsidian) !important;
+    color: var(--silver-light);
+    scroll-behavior: smooth;
 }
 
 .stApp {
-    background: radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.08), transparent 35%),
-                radial-gradient(circle at 85% 15%, rgba(167, 139, 250, 0.08), transparent 35%),
-                #0b0f19;
+    background-color: #07080b !important;
+    overflow-x: hidden;
 }
 
-/* Sembunyikan header bawaan Streamlit */
-header[data-testid="stHeader"] {
-    background: transparent;
+header[data-testid="stHeader"], footer {
+    visibility: hidden;
+    height: 0;
 }
+
 .block-container {
-    padding-top: 1.5rem;
-    padding-bottom: 3rem;
-    max-width: 1360px;
+    padding-top: 0 !important;
+    padding-bottom: 5rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    max-width: 1240px !important;
 }
 
-/* Top Navbar */
-.top-navbar {
-    background: rgba(17, 24, 39, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-subtle);
-    border-radius: 16px;
-    padding: 14px 22px;
-    margin-bottom: 1.5rem;
+/* ============================================================================
+   STICKY HERO BACKGROUND (TERTUTUP & MENJADI BLUR SAAT DI-SCROLL)
+   ============================================================================ */
+.hero-sticky-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 68vh;
+    min-height: 490px;
+    max-height: 620px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-}
-
-.team-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-}
-
-.team-badge {
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    color: #e2e8f0;
-    padding: 5px 12px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    transition: all 0.25s ease;
-}
-
-.team-badge:hover {
-    border-color: #38bdf8;
-    color: #38bdf8;
-    transform: translateY(-1px);
-}
-
-/* Hero Title */
-.hero-box {
+    justify-content: center;
     text-align: center;
-    padding: 0.5rem 1rem 1.5rem 1rem;
+    overflow: hidden;
+    padding: 2rem 1rem 5rem 1rem;
+    /* Sinar cahaya diagonal halus seperti di gambar referensi */
+    background:
+        linear-gradient(125deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.01) 28%, transparent 55%),
+        radial-gradient(ellipse at 50% 105%, rgba(255, 94, 20, 0.28) 0%, rgba(148, 163, 184, 0.08) 38%, transparent 70%),
+        #07080b;
 }
 
-.hero-title {
-    font-size: 2.35rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #f8fafc 20%, #38bdf8 60%, #a78bfa 100%);
+/* Lengkungan Cincin Oranye & Silver di Bagian Bawah Hero */
+.hero-arc-ring {
+    position: absolute;
+    bottom: -270px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 780px;
+    height: 440px;
+    border-radius: 50%;
+    background: linear-gradient(
+        90deg,
+        #1e293b 0%,
+        #94a3b8 14%,
+        #ff6a1a 35%,
+        #ff944d 52%,
+        #e2e8f0 74%,
+        #334155 100%
+    );
+    padding: 16px;
+    box-shadow:
+        0 -18px 65px rgba(255, 102, 26, 0.42),
+        0 -4px 24px rgba(226, 232, 240, 0.22),
+        inset 0 4px 18px rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-arc-ring::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 0%, #14161d 0%, #07080b 68%);
+}
+
+/* Badge Atas Kecil */
+.hero-pill-tag {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(24, 26, 34, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 5px 14px 5px 6px;
+    font-size: 0.78rem;
+    color: #cbd5e1;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hero-pill-dot {
+    background: linear-gradient(135deg, #ff5e14, #ff8c42);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+}
+
+/* Judul Utama Gradien Silver Metalik */
+.hero-main-title {
+    position: relative;
+    z-index: 2;
+    font-size: clamp(2.4rem, 5vw, 4.1rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    background: linear-gradient(180deg, #ffffff 15%, #e2e8f0 55%, #94a3b8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 0.4rem;
-    letter-spacing: -0.02em;
+    margin-bottom: 0.85rem;
 }
 
-.hero-desc {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    max-width: 760px;
-    margin: 0 auto;
+/* Subjudul Made By */
+.hero-made-by {
+    position: relative;
+    z-index: 2;
+    font-size: 0.92rem;
+    color: #94a3b8;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    max-width: 780px;
     line-height: 1.6;
 }
 
-/* Interactive Bubble Card Wrapper */
-div[data-testid="stVerticalBlockBorderWrapper"] {
-    background: linear-gradient(180deg, rgba(17, 24, 39, 0.95), rgba(13, 19, 34, 0.98)) !important;
-    border: 1px solid rgba(148, 163, 184, 0.18) !important;
-    border-radius: 20px !important;
-    padding: 1.25rem !important;
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.35s ease,
-                border-color 0.35s ease !important;
+.hero-made-by span {
+    color: #e2e8f0;
+    font-weight: 500;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"]:hover {
-    transform: translateY(-4px);
-    border-color: rgba(56, 189, 248, 0.5) !important;
-    box-shadow: 0 18px 40px -15px rgba(56, 189, 248, 0.22) !important;
+.hero-made-by b {
+    color: #ff8533;
+    font-weight: 600;
 }
 
-/* Sub-blok di dalam Card */
-.sub-block {
-    background: #0b1120;
-    border: 1px solid rgba(148, 163, 184, 0.15);
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    transition: border-color 0.25s ease;
+/* ============================================================================
+   PANEL KONTEN NAIK & MEM-BLUR BACKGROUND SAAT SCROLL
+   ============================================================================ */
+.glass-scroll-sheet {
+    position: relative;
+    z-index: 10;
+    margin-top: -115px;
+    background: rgba(10, 12, 17, 0.68);
+    backdrop-filter: blur(26px) saturate(140%);
+    -webkit-backdrop-filter: blur(26px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 1.75rem 2rem 2.25rem 2rem;
+    box-shadow:
+        0 -20px 60px rgba(0, 0, 0, 0.75),
+        0 25px 70px rgba(0, 0, 0, 0.85),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
-.sub-block:hover {
-    border-color: rgba(148, 163, 184, 0.35);
+/* ============================================================================
+   SLIDING PILL NAVBAR (ENCRYPT / DECRYPT) DENGAN LINGKARAN BERWARNA BERGERAK
+   ============================================================================ */
+div[data-testid="stRadio"] {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
 }
 
-.sub-block-title {
-    font-size: 0.78rem;
+div[data-testid="stRadio"] > div[role="radiogroup"] {
+    position: relative;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    background: rgba(15, 17, 24, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    padding: 6px;
+    gap: 0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), inset 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Lingkaran / Kapsul Berwarna yang Bergeser Halus */
+div[data-testid="stRadio"] > div[role="radiogroup"]::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(50% - 6px);
+    height: calc(100% - 12px);
+    border-radius: 999px;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                background 0.45s ease,
+                box-shadow 0.45s ease;
+    z-index: 0;
+}
+
+/* Posisi 1: Encrypt dipilih -> Kapsul Oranye Menyala */
+div[data-testid="stRadio"] > div[role="radiogroup"]:has(label:nth-child(1) input:checked)::before {
+    transform: translateX(0%);
+    background: linear-gradient(135deg, #ff5500 0%, #ff8533 100%);
+    box-shadow: 0 0 24px rgba(255, 94, 20, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+/* Posisi 2: Decrypt dipilih -> Bergeser mulus & berubah warna Silver-Cyan/Amber */
+div[data-testid="stRadio"] > div[role="radiogroup"]:has(label:nth-child(2) input:checked)::before {
+    transform: translateX(100%);
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 55%, #e2e8f0 100%);
+    box-shadow: 0 0 24px rgba(56, 189, 248, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* Styling tiap item tombol Encrypt & Decrypt */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label {
+    position: relative;
+    z-index: 1;
+    width: 155px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 !important;
+    padding: 10px 22px !important;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent !important;
+}
+
+/* Sembunyikan lingkaran radio default bawaan browser */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label > div:first-child {
+    display: none !important;
+}
+
+/* Teks di dalam tombol */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label p {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em;
+    color: #94a3b8 !important;
+    transition: color 0.3s ease, transform 0.25s ease;
+    margin: 0 !important;
+}
+
+/* Hover pada tombol yang tidak aktif */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:hover p {
+    color: #ffffff !important;
+    transform: scale(1.04);
+}
+
+/* Teks tombol aktif */
+div[data-testid="stRadio"] > div[role="radiogroup"] > label:has(input:checked) p {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================================
+   KARTU & SUB-BLOK DI DALAM WORKSPACE
+   ============================================================================ */
+.glass-subcard {
+    background: rgba(16, 19, 27, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-subcard:hover {
+    border-color: rgba(255, 115, 36, 0.38);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+.subcard-label {
+    font-size: 0.75rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     color: #94a3b8;
     margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* Horizontal Scrollable Box untuk Angka Panjang (d, n, ciphertext, ascii) */
-.scroll-mono-box {
+.subcard-label .dot-orange {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff6a1a;
+    box-shadow: 0 0 8px #ff6a1a;
+}
+
+.subcard-label .dot-silver {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8;
+}
+
+/* Kotak Output Angka Panjang (Bisa digeser horizontal) */
+.mono-scroll {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.88rem;
-    background: #060a14;
-    border: 1px solid rgba(56, 189, 248, 0.25);
-    color: #e2e8f0;
-    padding: 10px 14px;
-    border-radius: 10px;
+    background: rgba(7, 8, 12, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+    padding: 11px 14px;
+    border-radius: 12px;
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: thin;
-    scrollbar-color: #334155 #060a14;
+    scrollbar-color: #475569 rgba(7, 8, 12, 0.88);
 }
 
-.scroll-mono-box::-webkit-scrollbar {
-    height: 6px;
+.mono-scroll::-webkit-scrollbar {
+    height: 5px;
 }
-.scroll-mono-box::-webkit-scrollbar-track {
-    background: #060a14;
-    border-radius: 6px;
-}
-.scroll-mono-box::-webkit-scrollbar-thumb {
-    background: #334155;
-    border-radius: 6px;
+.mono-scroll::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 999px;
 }
 
-/* Input teks d dan n agar bisa digeser horizontal saat angka panjang */
-input[type="text"] {
+/* Input Streamlit Dark Metallic */
+div[data-testid="stTextInput"] input,
+div[data-testid="stNumberInput"] input {
+    background-color: rgba(7, 8, 12, 0.9) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
     font-family: 'JetBrains Mono', monospace !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-/* Parameter Grid */
-.param-item {
-    background: #0b1120;
-    border: 1px solid rgba(148, 163, 184, 0.14);
-    border-radius: 10px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
+div[data-testid="stTextInput"] input:focus,
+div[data-testid="stNumberInput"] input:focus {
+    border-color: #ff6a1a !important;
+    box-shadow: 0 0 0 2px rgba(255, 106, 26, 0.25) !important;
 }
 
-.param-label {
-    font-size: 0.74rem;
+/* Tombol Eksekusi Utama Oranye Menyala */
+div[data-testid="stButton"] > button[kind="primary"] {
+    background: linear-gradient(135deg, #ff5500 0%, #ff8533 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.2rem !important;
+    box-shadow: 0 8px 25px rgba(255, 94, 20, 0.38) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 32px rgba(255, 94, 20, 0.58) !important;
+}
+
+/* Tombol Sekunder Silver */
+div[data-testid="stButton"] > button[kind="secondary"] {
+    background: rgba(30, 34, 46, 0.85) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 12px !important;
+    font-weight: 500 !important;
+    transition: all 0.25s ease !important;
+}
+
+div[data-testid="stButton"] > button[kind="secondary"]:hover {
+    border-color: #ff8533 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Grid Parameter RSA */
+.stat-tile {
+    background: rgba(9, 11, 16, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+}
+
+.stat-title {
+    font-size: 0.72rem;
     color: #94a3b8;
     font-weight: 600;
+    margin-bottom: 3px;
 }
 
-.param-value {
+.stat-val-orange {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.86rem;
-    color: #38bdf8;
+    font-size: 0.88rem;
     font-weight: 600;
+    color: #ff8533;
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 2px;
 }
 
-.param-value-purple {
+.stat-val-silver {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.86rem;
-    color: #c4b5fd;
+    font-size: 0.88rem;
     font-weight: 600;
+    color: #e2e8f0;
     overflow-x: auto;
     white-space: nowrap;
-    padding-bottom: 2px;
-}
-
-/* Step Card untuk Halaman Proses RSA */
-.step-card {
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-left: 4px solid #38bdf8;
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
-}
-.step-card-dec {
-    background: #111827;
-    border: 1px solid rgba(148, 163, 184, 0.18);
-    border-left: 4px solid #a78bfa;
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 14px;
 }
 </style>
 """,
@@ -249,7 +452,7 @@ input[type="text"] {
 )
 
 # ==============================================================================
-# LOGIKA INTI KRIPTOGRAFI RSA (SESUAI NOTEBOOK COLAB)
+# 3. LOGIKA INTI KRIPTOGRAFI RSA (SESUAI NOTEBOOK COLAB)
 # ==============================================================================
 OFFSET = 27
 
@@ -342,14 +545,13 @@ def teks_ke_blok3(teks: str) -> tuple[list[str], list[str], list[str]]:
 def blok3_ke_teks_detail(
     blok_3: list[str],
 ) -> tuple[list[str], list[str], str]:
-  """Mengembalikan list blok 3 digit menjadi (list kode 2-digit Pi, list ASCII, teks asli)."""
+  """Mengembalikan list blok 3 digit menjadi (kode 2-digit Pi, ASCII asli, teks asli)."""
   if not blok_3:
     return [], [], ""
 
   blok_bersih = blok_3.copy()
   total_digit = len(blok_bersih) * 3
 
-  # Lepas padding nol di blok terakhir berdasarkan paritas panjang digit
   if total_digit % 2 == 1:
     blok_bersih[-1] = blok_bersih[-1][1:]
   elif blok_bersih[-1].startswith("00"):
@@ -367,8 +569,7 @@ def blok3_ke_teks_detail(
     kode_ascii = int(k2) + OFFSET
     if kode_ascii < 32 or kode_ascii > 126:
       raise ValueError(
-          f"Hasil kode ASCII ({kode_ascii}) di luar rentang karakter cetak"
-          " (32-126)."
+          f"Kode ASCII ({kode_ascii}) di luar rentang cetak (32-126)."
       )
     ascii_list.append(str(kode_ascii))
     karakter.append(chr(kode_ascii))
@@ -377,641 +578,406 @@ def blok3_ke_teks_detail(
 
 
 # ==============================================================================
-# STATE MANAGEMENT
+# 4. SESSION STATE
 # ==============================================================================
-if "active_mode" not in st.session_state:
-  st.session_state.active_mode = (
-      "enkripsi"  # "enkripsi" | "dekripsi" | "seimbang"
-  )
 if "enc_result" not in st.session_state:
   st.session_state.enc_result = None
 if "dec_result" not in st.session_state:
   st.session_state.dec_result = None
-if "nav_page" not in st.session_state:
-  st.session_state.nav_page = "Kalkulator RSA"
-
+if "mode_selector" not in st.session_state:
+  st.session_state.mode_selector = "Encrypt"
 
 # ==============================================================================
-# NAVBAR & HEADER IDENTITAS
+# 5. STICKY HERO SECTION (JUDUL, MADE BY, & CINCIN ORANYE-SILVER)
 # ==============================================================================
 st.markdown(
     """
-<div class="top-navbar">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:1.3rem;">🔐</span>
-        <span style="font-weight:800; font-size:1.05rem; letter-spacing:-0.01em;">RSA CRYPTOGRAPHY LAB</span>
+<div class="hero-sticky-wrapper">
+    <div class="hero-pill-tag">
+        <span class="hero-pill-dot">RSA ENGINE</span>
+        <span>Asymmetric Cryptography • Offset (-27)</span>
     </div>
-    <div class="team-badges">
-        <span class="team-badge">👤 Christian Zarkasie (002)</span>
-        <span class="team-badge">👤 Clifton Pratomo (005)</span>
-        <span class="team-badge">👤 I Nyoman Tisna Satya Wijaya (042)</span>
+    <h1 class="hero-main-title">RSA Encrypt &amp; Decrypt</h1>
+    <div class="hero-made-by">
+        Made by: 
+        <span>Christian Zarkasie</span> <b>(002)</b> &nbsp;•&nbsp; 
+        <span>Clifton Pratomo</span> <b>(005)</b> &nbsp;•&nbsp; 
+        <span>I Nyoman Tisna Satya Wijaya</span> <b>(042)</b>
     </div>
+    <div class="hero-arc-ring"></div>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-# Navigasi Halaman Utama
-nav_cols = st.columns([1, 1, 1, 1])
-pages = [
-    ("🧮 Kalkulator RSA", "Kalkulator RSA"),
-    ("⚙️ Proses RSA", "Proses RSA"),
-    ("ℹ️ Information", "Information"),
-    ("📘 Documentation", "Documentation"),
-]
+# ==============================================================================
+# 6. GLASSMORPHISM SCROLL SHEET (NAIK MENUTUPI & MEM-BLUR HERO SAAT DI-SCROLL)
+# ==============================================================================
+st.markdown('<div class="glass-scroll-sheet">', unsafe_allow_html=True)
 
-for col, (label, page_name) in zip(nav_cols, pages):
-  with col:
-    is_current = st.session_state.nav_page == page_name
+# 2-Item Sliding Pill Navbar (Encrypt | Decrypt)
+selected_mode = st.radio(
+    "Pilih Mode",
+    options=["Encrypt", "Decrypt"],
+    horizontal=True,
+    label_visibility="collapsed",
+    key="mode_selector",
+)
+
+# ==============================================================================
+# TAMPILAN 1: ENCRYPT
+# ==============================================================================
+if selected_mode == "Encrypt":
+  col_left, col_right = st.columns([1.08, 1], gap="large")
+
+  with col_left:
+    # BLOK 1: Teks Asli
+    st.markdown(
+        '<div class="glass-subcard"><div class="subcard-label"><span'
+        ' class="dot-orange"></span> Blok 1 · Teks Asli (Plaintext)</div>',
+        unsafe_allow_html=True,
+    )
+    teks_input = st.text_input(
+        "Teks Asli",
+        value="halooo",
+        placeholder="Masukkan pesan (ASCII 32–126)...",
+        label_visibility="collapsed",
+        key="enc_text_val",
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # BLOK 2: Digit p dan q bersebelahan
+    st.markdown(
+        '<div class="glass-subcard"><div class="subcard-label"><span'
+        ' class="dot-orange"></span> Blok 2 · Panjang Digit Prima p &amp;'
+        " q (1–24 Digit)</div>",
+        unsafe_allow_html=True,
+    )
+    c_p, c_q = st.columns(2, gap="medium")
+    with c_p:
+      digit_p = st.number_input(
+          "Digit Prima p",
+          min_value=1,
+          max_value=24,
+          value=4,
+          step=1,
+          key="in_digit_p",
+      )
+    with c_q:
+      digit_q = st.number_input(
+          "Digit Prima q",
+          min_value=1,
+          max_value=24,
+          value=4,
+          step=1,
+          key="in_digit_q",
+      )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Tombol Enkripsi
     if st.button(
-        label,
-        key=f"nav_{page_name}",
+        "⚡ Generate Kunci & Enkripsi Pesan",
+        type="primary",
         use_container_width=True,
-        type="primary" if is_current else "secondary",
     ):
-      st.session_state.nav_page = page_name
-      st.rerun()
-
-# Judul & Deskripsi Aplikasi
-st.markdown(
-    """
-<div class="hero-box">
-    <div class="hero-title">Simulasi & Kalkulator Kriptografi RSA</div>
-    <div class="hero-desc">
-        Platform interaktif untuk pembangkitan kunci asimetris bilangan prima hingga 24 digit, 
-        pengkodean blok 3-digit berbasis ASCII Offset (-27), serta proses enkripsi dan dekripsi pesan secara real-time.
-    </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
-
-# ==============================================================================
-# HALAMAN 1: KALKULATOR RSA (DUA CARD INTERAKTIF ENKRIPSI & DEKRIPSI)
-# ==============================================================================
-if st.session_state.nav_page == "Kalkulator RSA":
-  # Rasio lebar kolom dinamis saat bubble card Enkripsi atau Dekripsi diklik
-  if st.session_state.active_mode == "enkripsi":
-    col_widths = [2.25, 1.0]
-  elif st.session_state.active_mode == "dekripsi":
-    col_widths = [1.0, 2.25]
-  else:
-    col_widths = [1.0, 1.0]
-
-  col_enc, col_dec = st.columns(col_widths, gap="large")
-
-  # --------------------------------------------------------------------------
-  # DIV 1: CARD ENKRIPSI
-  # --------------------------------------------------------------------------
-  with col_enc:
-    with st.container(border=True):
-      hdr_l, hdr_r = st.columns([3, 1.4])
-      with hdr_l:
-        st.markdown("### 🔒 Enkripsi Pesan")
-        st.caption(
-            "Ubah teks asli menjadi blok ciphertext menggunakan kunci publik."
-        )
-      with hdr_r:
-        if st.session_state.active_mode != "enkripsi":
-          if st.button(
-              "⤢ Perbesar Enkripsi",
-              key="expand_enc",
-              use_container_width=True,
-          ):
-            st.session_state.active_mode = "enkripsi"
-            st.rerun()
-        else:
-          st.markdown(
-              "<div style='text-align:right; color:#38bdf8; font-size:0.8rem;"
-              " font-weight:700; padding-top:8px;'>● MODE FOKUS</div>",
-              unsafe_allow_html=True,
-          )
-
-      st.markdown("---")
-
-      # --- 3 BLOK UTAMA ENKRIPSI ---
-      # BLOK 1: Teks Asli
-      st.markdown(
-          '<div class="sub-block"><div class="sub-block-title">Blok 1 · Teks'
-          " Asli (Plaintext)</div>",
-          unsafe_allow_html=True,
-      )
-      teks_input = st.text_input(
-          "Masukkan teks (ASCII 32–126)",
-          value="halooo",
-          placeholder="Contoh: Halo Dunia 123!",
-          key="enc_teks_input",
-          label_visibility="collapsed",
-      )
-      st.markdown("</div>", unsafe_allow_html=True)
-
-      # BLOK 2: Nilai Digit p dan q (1 blok berisi 2 input bersebelahan)
-      st.markdown(
-          '<div class="sub-block"><div class="sub-block-title">Blok 2 ·'
-          " Panjang Digit Bilangan Prima (p & q)</div>",
-          unsafe_allow_html=True,
-      )
-      pq_col1, pq_col2 = st.columns(2, gap="medium")
-      with pq_col1:
-        digit_p = st.number_input(
-            "Digit Prima p (1–24)",
-            min_value=1,
-            max_value=24,
-            value=4,
-            step=1,
-            key="digit_p_input",
-        )
-      with pq_col2:
-        digit_q = st.number_input(
-            "Digit Prima q (1–24)",
-            min_value=1,
-            max_value=24,
-            value=4,
-            step=1,
-            key="digit_q_input",
-        )
-      st.markdown("</div>", unsafe_allow_html=True)
-
-      # Tombol Eksekusi Enkripsi
-      if st.button(
-          "⚡ Generate Kunci & Enkripsi",
-          type="primary",
-          use_container_width=True,
-          key="btn_run_enc",
-      ):
-        st.session_state.active_mode = "enkripsi"
-        if not teks_input:
-          st.error("Teks asli tidak boleh kosong.")
-        elif digit_p == 1 and digit_q == 1:
-          st.error(
-              "Kombinasi 1 digit untuk p dan q menghasilkan n ≤ 35 (harus n >"
-              " 999 untuk blok 3-digit). Gunakan minimal 2 digit pada salah"
-              " satu prima."
-          )
-        else:
-          try:
-            ascii_asli, kode_2digit, blok_plain = teks_ke_blok3(teks_input)
-
-            while True:
-              p_val = generate_random_prime(int(digit_p))
-              q_val = generate_random_prime(int(digit_q), exclude=p_val)
-              n_val = p_val * q_val
-              if n_val > 999:
-                break
-
-            m_val = (p_val - 1) * (q_val - 1)
-            e_val = generate_random_e(m_val)
-            d_val = pow(e_val, -1, m_val)
-
-            blok_cipher = [
-                str(pow(int(p_i), e_val, n_val)) for p_i in blok_plain
-            ]
-
-            st.session_state.enc_result = {
-                "p": p_val,
-                "q": q_val,
-                "n": n_val,
-                "m": m_val,
-                "e": e_val,
-                "d": d_val,
-                "ascii_asli": ascii_asli,
-                "kode_2digit": kode_2digit,
-                "blok_plain": blok_plain,
-                "blok_cipher": blok_cipher,
-            }
-          except ValueError as err:
-            st.error(str(err))
-
-      # BLOK 3: Hasil Ciphertext
-      enc_res = st.session_state.enc_result
-      cipher_preview = (
-          " ".join(enc_res["blok_cipher"])
-          if enc_res
-          else "Belum ada ciphertext — tekan tombol di atas."
-      )
-      st.markdown(
-          f"""
-            <div class="sub-block" style="margin-top:12px;">
-                <div class="sub-block-title">Blok 3 · Hasil Ciphertext (Cᵢ)</div>
-                <div class="scroll-mono-box" style="border-color: rgba(56, 189, 248, 0.45); color: #38bdf8; font-weight:600;">
-                    {cipher_preview}
-                </div>
-            </div>
-            """,
-          unsafe_allow_html=True,
-      )
-
-      if enc_res:
-        # Tombol bantu untuk salin cepat ke form dekripsi
-        if st.button(
-            "📤 Kirim Ciphertext & Kunci ke Panel Dekripsi",
-            use_container_width=True,
-            key="send_to_dec",
-        ):
-          st.session_state.dec_cipher_input = " ".join(enc_res["blok_cipher"])
-          st.session_state.dec_d_input = str(enc_res["d"])
-          st.session_state.dec_n_input = str(enc_res["n"])
-          st.session_state.active_mode = "dekripsi"
-          st.rerun()
-
-        st.markdown("#### 📊 Detail Parameter & Kunci RSA")
-
-        # Parameter p, q, n, m, e, d
-        p_col1, p_col2 = st.columns(2)
-        with p_col1:
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">p yang'
-              f' terpilih</div><div class="param-value">{enc_res["p"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">n (p ×'
-              f' q)</div><div class="param-value">{enc_res["n"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">e (Eksponen'
-              f' Publik)</div><div class="param-value">{enc_res["e"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-        with p_col2:
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">q yang'
-              f' terpilih</div><div class="param-value">{enc_res["q"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">m = φ(n) ='
-              f' (p-1)(q-1)</div><div class="param-value">{enc_res["m"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-          st.markdown(
-              f'<div class="param-item"><div class="param-label">d (Eksponen'
-              f' Privat)</div><div class="param-value">{enc_res["d"]}</div></div>',
-              unsafe_allow_html=True,
-          )
-
-        # Kode ASCII & Blok Plaintext
-        st.markdown(
-            f"""
-                <div class="param-item">
-                    <div class="param-label">Kode ASCII Asli</div>
-                    <div class="param-value" style="color:#e2e8f0;">{' '.join(enc_res['ascii_asli'])}</div>
-                </div>
-                <div class="param-item">
-                    <div class="param-label">Kode 2-Digit (ASCII - 27) & Blok Plaintext (Pᵢ)</div>
-                    <div class="param-value" style="color:#93c5fd;">
-                        2-Digit: {' '.join(enc_res['kode_2digit'])} &nbsp;|&nbsp; Blok 3-Digit: {' '.join(enc_res['blok_plain'])}
-                    </div>
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
-
-        # Kunci Privat (e, n) & Kunci Publik (d, n) sesuai spesifikasi sketsa
-        k_col1, k_col2 = st.columns(2)
-        with k_col1:
-          st.markdown(
-              f"""
-                    <div class="param-item" style="border-color: rgba(56, 189, 248, 0.35);">
-                        <div class="param-label">Kunci Privat (e, n)</div>
-                        <div class="param-value">({enc_res['e']}, {enc_res['n']})</div>
-                    </div>
-                    """,
-              unsafe_allow_html=True,
-          )
-        with k_col2:
-          st.markdown(
-              f"""
-                    <div class="param-item" style="border-color: rgba(167, 139, 250, 0.35);">
-                        <div class="param-label">Kunci Publik (d, n)</div>
-                        <div class="param-value-purple">({enc_res['d']}, {enc_res['n']})</div>
-                    </div>
-                    """,
-              unsafe_allow_html=True,
-          )
-
-  # --------------------------------------------------------------------------
-  # DIV 2: CARD DEKRIPSI
-  # --------------------------------------------------------------------------
-  with col_dec:
-    with st.container(border=True):
-      dhdr_l, dhdr_r = st.columns([3, 1.4])
-      with dhdr_l:
-        st.markdown("### 🔓 Dekripsi Pesan")
-        st.caption(
-            "Kembalikan blok ciphertext menjadi teks asli menggunakan d dan n."
-        )
-      with dhdr_r:
-        if st.session_state.active_mode != "dekripsi":
-          if st.button(
-              "⤢ Perbesar Dekripsi",
-              key="expand_dec",
-              use_container_width=True,
-          ):
-            st.session_state.active_mode = "dekripsi"
-            st.rerun()
-        else:
-          st.markdown(
-              "<div style='text-align:right; color:#a78bfa; font-size:0.8rem;"
-              " font-weight:700; padding-top:8px;'>● MODE FOKUS</div>",
-              unsafe_allow_html=True,
-          )
-
-      st.markdown("---")
-
-      # BLOK 1: Input Teks Cipher
-      st.markdown(
-          '<div class="sub-block"><div class="sub-block-title">Blok 1 ·'
-          " Masukkan Teks Cipher (Pisahkan Spasi)</div>",
-          unsafe_allow_html=True,
-      )
-      cipher_input = st.text_input(
-          "Blok Ciphertext",
-          placeholder="Contoh: 407 436 912",
-          key="dec_cipher_input",
-          label_visibility="collapsed",
-      )
-      st.markdown("</div>", unsafe_allow_html=True)
-
-      # BLOK 2: Input d dan n bersebelahan (dengan horizontal scroll untuk angka panjang)
-      st.markdown(
-          '<div class="sub-block"><div class="sub-block-title">Blok 2 · Input'
-          " Nilai d dan n (Bersebelahan & Scrollable)</div>",
-          unsafe_allow_html=True,
-      )
-      dn_col1, dn_col2 = st.columns(2, gap="medium")
-      with dn_col1:
-        d_input_str = st.text_input(
-            "Nilai d",
-            placeholder="Masukkan nilai d...",
-            key="dec_d_input",
-        )
-        if d_input_str.strip():
-          st.markdown(
-              f'<div class="scroll-mono-box" style="font-size:0.76rem;'
-              f' padding:6px 10px; border-color:rgba(167,139,250,0.3);">d:'
-              f" {d_input_str.strip()}</div>",
-              unsafe_allow_html=True,
-          )
-      with dn_col2:
-        n_input_str = st.text_input(
-            "Nilai n",
-            placeholder="Masukkan nilai n...",
-            key="dec_n_input",
-        )
-        if n_input_str.strip():
-          st.markdown(
-              f'<div class="scroll-mono-box" style="font-size:0.76rem;'
-              f' padding:6px 10px; border-color:rgba(167,139,250,0.3);">n:'
-              f" {n_input_str.strip()}</div>",
-              unsafe_allow_html=True,
-          )
-      st.markdown("</div>", unsafe_allow_html=True)
-
-      # Tombol Eksekusi Dekripsi
-      if st.button(
-          "🗝️ Dekripsi Ciphertext",
-          type="primary",
-          use_container_width=True,
-          key="btn_run_dec",
-      ):
-        st.session_state.active_mode = "dekripsi"
-        blok_c = cipher_input.strip().split()
-        if not blok_c or not all(b.isdigit() for b in blok_c):
-          st.error("Format ciphertext tidak valid. Masukkan angka dipisah spasi.")
-        elif (
-            not d_input_str.strip().isdigit()
-            or not n_input_str.strip().isdigit()
-        ):
-          st.error("Nilai d dan n harus berupa bilangan bulat positif.")
-        else:
-          try:
-            d_val = int(d_input_str.strip())
-            n_val = int(n_input_str.strip())
-            blok_plain_dec = []
-
-            for c_str in blok_c:
-              c_i = int(c_str)
-              p_i = pow(c_i, d_val, n_val)
-              if p_i > 999:
-                raise ValueError(
-                    f"Hasil dekripsi blok ({p_i}) melebihi 3 digit. Periksa"
-                    " kembali nilai d dan n."
-                )
-              blok_plain_dec.append(f"{p_i:03d}")
-
-            pi_2digit, ascii_dec, hasil_teks = blok3_ke_teks_detail(
-                blok_plain_dec
-            )
-
-            st.session_state.dec_result = {
-                "blok_plain": blok_plain_dec,
-                "pi_2digit": pi_2digit,
-                "ascii_dec": ascii_dec,
-                "hasil_teks": hasil_teks,
-            }
-          except Exception as err:
-            st.error(f"Dekripsi gagal: {err}")
-
-      # OUTPUT DEKRIPSI
-      dec_res = st.session_state.dec_result
-      if dec_res:
-        st.markdown("#### 📄 Hasil Dekripsi")
-
-        # 1. Teks asli berupa blok (3-digit Pi)
-        st.markdown(
-            f"""
-                <div class="sub-block">
-                    <div class="sub-block-title">Blok Plaintext Terdekripsi (Pᵢ - Blok 3 Digit)</div>
-                    <div class="scroll-mono-box" style="border-color: rgba(167, 139, 250, 0.45); color: #c4b5fd; font-weight:600;">
-                        {' '.join(dec_res['blok_plain'])}
-                    </div>
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
-
-        # 2. Hasil Pi setelah diubah menjadi 2 digit
-        st.markdown(
-            f"""
-                <div class="sub-block">
-                    <div class="sub-block-title">Hasil Pᵢ Setelah Diubah Menjadi 2 Digit (Sebelum +27)</div>
-                    <div class="scroll-mono-box" style="color: #e2e8f0;">
-                        {' '.join(dec_res['pi_2digit'])}
-                    </div>
-                    <div style="font-size:0.75rem; color:#94a3b8; margin-top:6px;">
-                        Kode ASCII (+27): <span style="font-family:'JetBrains Mono', monospace; color:#cbd5e1;">{' '.join(dec_res['ascii_dec'])}</span>
-                    </div>
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
-
-        # 3. Teks Asli Final
-        st.markdown(
-            f"""
-                <div class="sub-block" style="border-color: rgba(52, 211, 153, 0.45); background: rgba(6, 78, 59, 0.2);">
-                    <div class="sub-block-title" style="color:#6ee7b7;">Teks Asli Berhasil Dipulihkan</div>
-                    <div class="scroll-mono-box" style="border-color: rgba(52, 211, 153, 0.45); color: #34d399; font-size:1.05rem; font-weight:700;">
-                        {dec_res['hasil_teks']}
-                    </div>
-                </div>
-                """,
-            unsafe_allow_html=True,
+      if not teks_input:
+        st.error("Teks asli tidak boleh kosong.")
+      elif digit_p == 1 and digit_q == 1:
+        st.error(
+            "Kombinasi 1 digit untuk p dan q menghasilkan n ≤ 35 (syarat blok"
+            " 3-digit: n > 999)."
         )
       else:
+        try:
+          ascii_asli, kode_2digit, blok_plain = teks_ke_blok3(teks_input)
+
+          while True:
+            p_val = generate_random_prime(int(digit_p))
+            q_val = generate_random_prime(int(digit_q), exclude=p_val)
+            n_val = p_val * q_val
+            if n_val > 999:
+              break
+
+          m_val = (p_val - 1) * (q_val - 1)
+          e_val = generate_random_e(m_val)
+          d_val = pow(e_val, -1, m_val)
+          blok_cipher = [
+              str(pow(int(p_i), e_val, n_val)) for p_i in blok_plain
+          ]
+
+          st.session_state.enc_result = {
+              "p": p_val,
+              "q": q_val,
+              "n": n_val,
+              "m": m_val,
+              "e": e_val,
+              "d": d_val,
+              "ascii_asli": ascii_asli,
+              "kode_2digit": kode_2digit,
+              "blok_plain": blok_plain,
+              "blok_cipher": blok_cipher,
+          }
+        except ValueError as err:
+          st.error(str(err))
+
+    # BLOK 3: Hasil Ciphertext
+    enc_res = st.session_state.enc_result
+    cipher_str = (
+        " ".join(enc_res["blok_cipher"])
+        if enc_res
+        else "Hasil blok ciphertext akan muncul di sini..."
+    )
+    st.markdown(
+        f"""
+        <div class="glass-subcard" style="margin-top:14px;">
+            <div class="subcard-label"><span class="dot-orange"></span> Blok 3 · Hasil Ciphertext (Cᵢ)</div>
+            <div class="mono-scroll" style="color:#ff8533; font-weight:600; border-color:rgba(255,106,26,0.35);">
+                {cipher_str}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if enc_res:
+
+      def copy_to_decrypt():
+        st.session_state.dec_cipher_val = " ".join(enc_res["blok_cipher"])
+        st.session_state.dec_d_val = str(enc_res["d"])
+        st.session_state.dec_n_val = str(enc_res["n"])
+        st.session_state.mode_selector = "Decrypt"
+
+      st.button(
+          "↗ Kirim Ciphertext & Kunci ke Tab Decrypt",
+          use_container_width=True,
+          on_click=copy_to_decrypt,
+      )
+
+  # Kolom Kanan: Rincian Parameter & Kunci
+  with col_right:
+    st.markdown(
+        '<div class="glass-subcard" style="height:100%;"><div'
+        ' class="subcard-label"><span class="dot-orange"></span> Parameter'
+        " Matematis &amp; Kunci Terbentuk</div>",
+        unsafe_allow_html=True,
+    )
+    if enc_res:
+      g1, g2 = st.columns(2)
+      with g1:
         st.markdown(
-            """
-                <div class="sub-block" style="margin-top:12px;">
-                    <div class="sub-block-title">Hasil Dekripsi</div>
-                    <div style="color:#64748b; font-size:0.86rem;">
-                        Masukkan blok ciphertext beserta nilai d dan n, lalu klik tombol <b>Dekripsi Ciphertext</b> untuk melihat blok Pᵢ, kode 2-digit, dan teks aslinya.
-                    </div>
-                </div>
-                """,
+            f'<div class="stat-tile"><div class="stat-title">p yang'
+            f' terpilih</div><div'
+            f' class="stat-val-orange">{enc_res["p"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="stat-tile"><div class="stat-title">n (p × q)</div><div'
+            f' class="stat-val-silver">{enc_res["n"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="stat-tile"><div class="stat-title">e (Eksponen'
+            f' Publik)</div><div'
+            f' class="stat-val-orange">{enc_res["e"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+      with g2:
+        st.markdown(
+            f'<div class="stat-tile"><div class="stat-title">q yang'
+            f' terpilih</div><div'
+            f' class="stat-val-orange">{enc_res["q"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="stat-tile"><div class="stat-title">m = (p − 1)(q −'
+            f' 1)</div><div'
+            f' class="stat-val-silver">{enc_res["m"]}</div></div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="stat-tile"><div class="stat-title">d (Eksponen'
+            f' Privat)</div><div'
+            f' class="stat-val-orange">{enc_res["d"]}</div></div>',
             unsafe_allow_html=True,
         )
 
-
-# ==============================================================================
-# HALAMAN 2: PROSES RSA (KONSEPTUAL & ALUR MATEMATIS - TANPA KODE)
-# ==============================================================================
-elif st.session_state.nav_page == "Proses RSA":
-  st.markdown("## ⚙️ Bagaimana Algoritma RSA Bekerja?")
-  st.write(
-      "RSA (*Rivest–Shamir–Adleman*) adalah algoritma kriptografi asimetris"
-      " yang menggunakan sepasang kunci berbeda untuk mengunci (enkripsi) dan"
-      " membuka pesan (dekripsi). Keamanannya bertumpu pada sulitnya"
-      " memfaktorkan hasil perkalian dua bilangan prima raksasa."
-  )
-
-  p_col1, p_col2 = st.columns(2, gap="large")
-
-  with p_col1:
-    st.markdown("### 🔑 Tahap 1: Pembangkitan Kunci")
-    st.markdown(
-        """
-        <div class="step-card">
-            <b>1. Pemilihan Dua Bilangan Prima (p dan q)</b><br>
-            Sistem memilih dua bilangan prima acak yang berbeda (<i>p ≠ q</i>) sesuai jumlah digit yang ditentukan pengguna.
-        </div>
-        <div class="step-card">
-            <b>2. Menghitung Modulus (n)</b><br>
-            Kedua bilangan prima dikalikan: <b>n = p × q</b>. Nilai <i>n</i> menjadi batas atas ruang aritmetika modulo dan harus lebih besar dari 999 agar mampu menampung blok 3-digit.
-        </div>
-        <div class="step-card">
-            <b>3. Menghitung Fungsi Totient Euler (m)</b><br>
-            Menghitung banyaknya bilangan bulat positif di bawah <i>n</i> yang relatif prima dengannya: <b>m = φ(n) = (p − 1)(q − 1)</b>.
-        </div>
-        <div class="step-card">
-            <b>4. Menentukan Eksponen e dan Invers Modular d</b><br>
-            • Memilih bilangan acak <b>e</b> (1 &lt; e &lt; m) yang koprim dengan <i>m</i> (PBB(e, m) = 1).<br>
-            • Menghitung <b>d</b> sebagai invers perkalian modular dari <i>e</i> terhadap <i>m</i>, sehingga memenuhi <b>(e × d) mod m = 1</b>.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-  with p_col2:
-    st.markdown("### 🔄 Tahap 2: Pengkodean, Enkripsi & Dekripsi")
-    st.markdown(
-        """
-        <div class="step-card-dec">
-            <b>1. Konversi Karakter ke Kode 2-Digit (Offset -27)</b><br>
-            Setiap karakter teks (ASCII 32–126) dikurangi <b>27</b> sehingga seluruh karakter—baik 2 digit maupun 3 digit—seragam menjadi tepat <b>2 digit (05–99)</b>.
-        </div>
-        <div class="step-card-dec">
-            <b>2. Pembentukan Blok Plaintext 3-Digit (Pᵢ)</b><br>
-            Seluruh kode 2-digit digabungkan menjadi satu deret angka panjang, lalu dipotong per <b>3 digit</b>. Jika blok terakhir kurang dari 3 digit, ditambahkan angka nol di depan.
-        </div>
-        <div class="step-card-dec">
-            <b>3. Proses Enkripsi Menjadi Ciphertext (Cᵢ)</b><br>
-            Setiap blok <i>Pᵢ</i> dihitung dengan perpangkatan modular: <b>Cᵢ = Pᵢᵉ mod n</b>. Hasilnya berupa deretan angka acak yang tidak terbaca.
-        </div>
-        <div class="step-card-dec">
-            <b>4. Proses Dekripsi & Pemulihan Teks</b><br>
-            Setiap blok <i>Cᵢ</i> dikembalikan dengan rumus <b>Pᵢ = Cᵢᵈ mod n</b>, diformat ulang ke 3 digit, dibersihkan nol tambahannya, dipecah kembali per <b>2 digit</b>, lalu ditambah <b>27</b> untuk mendapatkan karakter ASCII semula.
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-# ==============================================================================
-# HALAMAN 3: INFORMATION
-# ==============================================================================
-elif st.session_state.nav_page == "Information":
-  st.markdown("## ℹ️ Informasi Aplikasi & Tim Pengembang")
-
-  info_c1, info_c2 = st.columns([1.4, 1], gap="large")
-  with info_c1:
-    with st.container(border=True):
-      st.markdown("### Tentang Proyek")
-      st.write(
-          "Aplikasi web ini dikembangkan untuk memvisualisasikan implementasi"
-          " kriptografi kunci publik **RSA** secara utuh—mulai dari"
-          " pembangkitan bilangan prima acak hingga 24 digit, transformasi"
-          " teks ke blok numerik, hingga pemulihan pesan asli."
-      )
-      st.markdown("""
-            **Fitur Utama Sistem:**
-            * **Pembangkit Prima Multi-Digit (1–24 Digit):** Menggunakan uji primalitas deterministik *Miller-Rabin* untuk menjamin keakuratan bilangan prima besar secara instan.
-            * **Skema Pengkodean ASCII Offset (-27):** Menjaga konsistensi huruf kapital, huruf kecil, angka, spasi, dan simbol cetak (ASCII 32–126) tanpa risiko ambiguitas saat pemotongan blok.
-            * **Antarmuka Fokus Dinamis:** Kartu Enkripsi dan Dekripsi yang dapat diperbesar secara interaktif sesuai kebutuhan pengguna.
-            """)
-
-  with info_c2:
-    with st.container(border=True):
-      st.markdown("### Anggota Kelompok")
       st.markdown(
-          """
-            <div class="param-item">
-                <div class="param-label">Anggota 1 · NRP 002</div>
-                <div class="param-value" style="color:#f8fafc;">Christian Zarkasie</div>
+          f"""
+            <div class="stat-tile">
+                <div class="stat-title">Kode ASCII Asli</div>
+                <div class="stat-val-silver">{' '.join(enc_res['ascii_asli'])}</div>
             </div>
-            <div class="param-item">
-                <div class="param-label">Anggota 2 · NRP 005</div>
-                <div class="param-value" style="color:#f8fafc;">Clifton Pratomo</div>
-            </div>
-            <div class="param-item">
-                <div class="param-label">Anggota 3 · NRP 042</div>
-                <div class="param-value" style="color:#f8fafc;">I Nyoman Tisna Satya Wijaya</div>
+            <div class="stat-tile">
+                <div class="stat-title">Kode 2-Digit (-27) &amp; Blok Plaintext 3-Digit (Pᵢ)</div>
+                <div class="stat-val-silver">2-Digit: {' '.join(enc_res['kode_2digit'])} &nbsp;|&nbsp; Blok Pᵢ: {' '.join(enc_res['blok_plain'])}</div>
             </div>
             """,
           unsafe_allow_html=True,
       )
 
+      k1, k2 = st.columns(2)
+      with k1:
+        st.markdown(
+            f"""
+                <div class="stat-tile" style="border-color:rgba(255,106,26,0.35);">
+                    <div class="stat-title">Kunci Privat (e, n)</div>
+                    <div class="stat-val-orange">({enc_res['e']}, {enc_res['n']})</div>
+                </div>
+                """,
+            unsafe_allow_html=True,
+        )
+      with k2:
+        st.markdown(
+            f"""
+                <div class="stat-tile" style="border-color:rgba(226,232,240,0.28);">
+                    <div class="stat-title">Kunci Publik (d, n)</div>
+                    <div class="stat-val-silver">({enc_res['d']}, {enc_res['n']})</div>
+                </div>
+                """,
+            unsafe_allow_html=True,
+        )
+    else:
+      st.markdown(
+          """
+            <div style="padding: 3.5rem 1rem; text-align:center; color:#64748b; font-size:0.9rem;">
+                Masukkan teks dan jumlah digit bilangan prima di sebelah kiri, lalu tekan tombol <b>Generate Kunci &amp; Enkripsi Pesan</b> untuk melihat rincian nilai <i>p, q, n, m, e, d</i>, kode ASCII, serta pasangan kunci.
+            </div>
+            """,
+          unsafe_allow_html=True,
+      )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ==============================================================================
-# HALAMAN 4: DOCUMENTATION
+# TAMPILAN 2: DECRYPT
 # ==============================================================================
-elif st.session_state.nav_page == "Documentation":
-  st.markdown("## 📘 Dokumentasi Teknis & Panduan Penggunaan")
+else:
+  d_left, d_right = st.columns([1.05, 1], gap="large")
 
-  with st.container(border=True):
-    st.markdown("### 1. Panduan Penggunaan")
-    st.markdown("""
-        **A. Melakukan Enkripsi:**
-        1. Buka tab **Kalkulator RSA** dan klik kartu **Enkripsi Pesan** (atau tombol *Perbesar Enkripsi*).
-        2. Masukkan teks pada **Blok 1** (mendukung seluruh karakter ASCII cetak 32–126).
-        3. Tentukan jumlah digit bilangan prima `p` dan `q` pada **Blok 2** (1–24 digit; pastikan perkalian `n = p × q > 999`).
-        4. Tekan **Generate Kunci & Enkripsi**. Hasil ciphertext muncul pada **Blok 3**, disertai rincian `p, q, n, m, e, d`, kode ASCII, serta pasangan kunci.
-        5. Gunakan tombol **Kirim Ciphertext & Kunci ke Panel Dekripsi** untuk menguji dekripsi secara otomatis.
+  with d_left:
+    # BLOK 1: Input Ciphertext
+    st.markdown(
+        '<div class="glass-subcard"><div class="subcard-label"><span'
+        ' class="dot-silver"></span> Blok 1 · Masukkan Teks Cipher (Pisahkan'
+        " Spasi)</div>",
+        unsafe_allow_html=True,
+    )
+    cipher_in = st.text_input(
+        "Teks Cipher",
+        placeholder="Contoh: 407 436 812",
+        label_visibility="collapsed",
+        key="dec_cipher_val",
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        **B. Melakukan Dekripsi:**
-        1. Masukkan deretan angka ciphertext yang dipisahkan spasi pada **Blok 1**.
-        2. Masukkan nilai `d` dan `n` pada **Blok 2** (kolom dapat digeser secara horizontal apabila angka berdigit panjang).
-        3. Tekan **Dekripsi Ciphertext** untuk melihat blok 3-digit $P_i$, hasil konversi 2-digit $P_i$, serta teks asli yang dipulihkan.
-        """)
+    # BLOK 2: Input d dan n bersebelahan & bisa digeser horizontal jika panjang
+    st.markdown(
+        '<div class="glass-subcard"><div class="subcard-label"><span'
+        ' class="dot-silver"></span> Blok 2 · Nilai d &amp; n (Bersebelahan'
+        " &amp; Scrollable)</div>",
+        unsafe_allow_html=True,
+    )
+    col_d, col_n = st.columns(2, gap="medium")
+    with col_d:
+      d_in = st.text_input(
+          "Nilai d", placeholder="Masukkan d...", key="dec_d_val"
+      )
+      if d_in.strip():
+        st.markdown(
+            f'<div class="mono-scroll" style="font-size:0.76rem; padding:6px'
+            f' 10px;">d: {d_in.strip()}</div>',
+            unsafe_allow_html=True,
+        )
+    with col_n:
+      n_in = st.text_input(
+          "Nilai n", placeholder="Masukkan n...", key="dec_n_val"
+      )
+      if n_in.strip():
+        st.markdown(
+            f'<div class="mono-scroll" style="font-size:0.76rem; padding:6px'
+            f' 10px;">n: {n_in.strip()}</div>',
+            unsafe_allow_html=True,
+        )
+    st.markdown("</div>", unsafe_allow_html=True)
 
-  with st.container(border=True):
-    st.markdown("### 2. Spesifikasi Arsitektur Fungsi")
-    st.markdown("""
-        | Nama Fungsi | Input | Output | Deskripsi Tugas |
-        | :--- | :--- | :--- | :--- |
-        | `generate_random_prime(digits, exclude)` | `digits: int`, `exclude: int` | `int` | Menghasilkan bilangan prima acak 1–24 digit dengan optimasi lompatan ganjil. |
-        | `generate_random_e(m)` | `m: int` | `int` | Memilih eksponen $1 < e < m$ yang memenuhi $\\text{PBB}(e, m) = 1$. |
-        | `teks_ke_blok3(teks)` | `teks: str` | `(ascii, kode_2d, blok_3)` | Mengurangi ASCII dengan `OFFSET = 27` menjadi 2 digit, lalu memecahnya menjadi blok 3-digit. |
-        | `blok3_ke_teks_detail(blok_3)` | `blok_3: list[str]` | `(kode_2d, ascii, teks)` | Menghapus nol padding di blok akhir berdasarkan paritas digit, memecah per 2 digit, dan menambah `+27`. |
-        """)
+    if st.button(
+        "🔓 Dekripsi Ciphertext", type="primary", use_container_width=True
+    ):
+      blok_c = cipher_in.strip().split()
+      if not blok_c or not all(b.isdigit() for b in blok_c):
+        st.error(
+            "Format ciphertext tidak valid. Masukkan angka yang dipisah spasi."
+        )
+      elif not d_in.strip().isdigit() or not n_in.strip().isdigit():
+        st.error("Nilai d dan n harus berupa bilangan bulat positif.")
+      else:
+        try:
+          d_val = int(d_in.strip())
+          n_val = int(n_in.strip())
+          blok_plain_dec = []
+
+          for c_str in blok_c:
+            c_i = int(c_str)
+            p_i = pow(c_i, d_val, n_val)
+            if p_i > 999:
+              raise ValueError(
+                  f"Hasil dekripsi blok ({p_i}) > 999. Periksa kembali nilai d"
+                  " dan n."
+              )
+            blok_plain_dec.append(f"{p_i:03d}")
+
+          pi_2digit, ascii_dec, hasil_teks = blok3_ke_teks_detail(
+              blok_plain_dec
+          )
+          st.session_state.dec_result = {
+              "blok_plain": blok_plain_dec,
+              "pi_2digit": pi_2digit,
+              "ascii_dec": ascii_dec,
+              "hasil_teks": hasil_teks,
+          }
+        except Exception as err:
+          st.error(f"Dekripsi gagal: {err}")
+
+  with d_right:
+    st.markdown(
+        '<div class="glass-subcard" style="height:100%;"><div'
+        ' class="subcard-label"><span class="dot-silver"></span> Hasil'
+        " Dekripsi &amp; Pemulihan Blok</div>",
+        unsafe_allow_html=True,
+    )
+    dec_res = st.session_state.dec_result
+    if dec_res:
+      st.markdown(
+          f"""
+            <div class="stat-tile">
+                <div class="stat-title">Teks Asli Berupa Blok (Blok Pᵢ 3-Digit)</div>
+                <div class="mono-scroll" style="color:#38bdf8; font-weight:600;">{' '.join(dec_res['blok_plain'])}</div>
+            </div>
+            <div class="stat-tile">
+                <div class="stat-title">Hasil Pᵢ Setelah Diubah Menjadi 2 Digit (Sebelum +27)</div>
+                <div class="mono-scroll" style="color:#e2e8f0;">{' '.join(dec_res['pi_2digit'])}</div>
+            </div>
+            <div class="stat-tile">
+                <div class="stat-title">Kode ASCII Asli (+27)</div>
+                <div class="mono-scroll" style="color:#94a3b8;">{' '.join(dec_res['ascii_dec'])}</div>
+            </div>
+            <div class="stat-tile" style="border-color:rgba(255,106,26,0.45); background:rgba(255,94,20,0.08);">
+                <div class="stat-title" style="color:#ff8533;">Teks Asli Final</div>
+                <div class="mono-scroll" style="color:#ffffff; font-size:1.05rem; font-weight:700; border-color:rgba(255,106,26,0.4);">
+                    {dec_res['hasil_teks']}
+                </div>
+            </div>
+            """,
+          unsafe_allow_html=True,
+      )
+    else:
+      st.markdown(
+          """
+            <div style="padding: 3.5rem 1rem; text-align:center; color:#64748b; font-size:0.9rem;">
+                Masukkan blok ciphertext serta nilai <b>d</b> dan <b>n</b> di sebelah kiri, lalu tekan <b>Dekripsi Ciphertext</b> untuk melihat blok plaintext, hasil konversi Pᵢ 2-digit, dan teks aslinya.
+            </div>
+            """,
+          unsafe_allow_html=True,
+      )
+    st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)  # Tutup .glass-scroll-sheet
