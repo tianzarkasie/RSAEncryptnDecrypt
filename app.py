@@ -1,8 +1,10 @@
 import html
+import json
 import math
 import random
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 # ==============================================================================
 # 1. KONFIGURASI HALAMAN
@@ -673,6 +675,60 @@ def tile(title: str, value: str, tone: str = "s", extra_style: str = "") -> str:
   )
 
 
+def copy_tile(
+    title: str,
+    value,
+    tone: str = "s",
+    big: bool = False,
+    highlight: bool = False,
+) -> None:
+  """Kotak nilai dengan tombol Salin (clipboard). Nilai panjang bisa digeser."""
+  value = str(value)
+  colors = {"o": "#ff8533", "s": "#e2e8f0", "b": "#38bdf8"}
+  accent = "#38bdf8" if st.session_state.mode_selector == "Decrypt" else "#ff8533"
+  accent_rgb = "56,189,248" if accent == "#38bdf8" else "255,133,51"
+  border = f"rgba({accent_rgb},0.5)" if highlight else "rgba(255,255,255,0.09)"
+  bg = f"rgba({accent_rgb},0.08)" if highlight else "rgba(9,11,16,0.85)"
+  size = "1.05rem" if big else "0.88rem"
+  safe_js = json.dumps(value).replace("</", "<\\/")
+  doc = f"""<!doctype html><html><head><meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
+*{{box-sizing:border-box}}
+html,body{{margin:0;background:transparent;font-family:'Inter',sans-serif;overflow:hidden}}
+.tile{{background:{bg};border:1px solid {border};border-radius:12px;padding:9px 12px 10px 14px;transition:border-color .25s,background .25s}}
+.tile:hover{{border-color:rgba({accent_rgb},.55)}}
+.top{{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:5px}}
+.t{{font-size:.72rem;font-weight:600;color:{accent if highlight else '#94a3b8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+button{{display:inline-flex;align-items:center;gap:5px;cursor:pointer;font:600 .7rem 'Inter',sans-serif;color:#e2e8f0;
+ background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:4px 11px;transition:all .2s}}
+button:hover{{background:{accent};border-color:{accent};color:#fff;transform:translateY(-1px)}}
+button.ok{{background:#16a34a;border-color:#16a34a;color:#fff}}
+.v{{font-family:'JetBrains Mono',monospace;font-size:{size};font-weight:{700 if big else 600};color:{'#fff' if big else colors.get(tone,'#e2e8f0')};
+ white-space:nowrap;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin;scrollbar-color:#475569 transparent}}
+.v::-webkit-scrollbar{{height:5px}}.v::-webkit-scrollbar-thumb{{background:#475569;border-radius:999px}}
+</style></head><body>
+<div class="tile"><div class="top"><span class="t">{html.escape(title)}</span>
+<button id="b" type="button"><span id="i">⧉</span><span id="l">Salin</span></button></div>
+<div class="v">{html.escape(value)}</div></div>
+<script>
+const text={safe_js};
+const b=document.getElementById('b'),l=document.getElementById('l'),i=document.getElementById('i');
+function fallback(t){{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';
+ document.body.appendChild(a);a.select();let ok=false;try{{ok=document.execCommand('copy')}}catch(e){{}}document.body.removeChild(a);return ok}}
+b.addEventListener('click',async()=>{{
+ let ok=false;
+ try{{await navigator.clipboard.writeText(text);ok=true}}catch(e){{ok=fallback(text)}}
+ l.textContent=ok?'Tersalin':'Gagal';i.textContent=ok?'✓':'!';b.classList.toggle('ok',ok);
+ setTimeout(()=>{{l.textContent='Salin';i.textContent='⧉';b.classList.remove('ok')}},1600);
+}});
+</script></body></html>"""
+  if hasattr(st, "iframe"):  # Streamlit terbaru (components.html sudah deprecated)
+    st.iframe(doc, height=84)
+  else:
+    components.html(doc, height=84)
+
+
 # ==============================================================================
 # 5. NAVBAR
 # ==============================================================================
@@ -832,11 +888,15 @@ with st.container(key="sheet"):
       )
       with st.container(key="card_cipher"):
         card_label("Blok 3 · Hasil ciphertext (Cᵢ)")
-        st.markdown(
-            f'<div class="mono-scroll" style="color:#ff8533;font-weight:600;'
-            f'border-color:rgba(255,106,26,0.35);margin-bottom:6px;">{cipher_str}</div>',
-            unsafe_allow_html=True,
-        )
+        if enc_res:
+          copy_tile("Ciphertext (Cᵢ)", cipher_str, "o", highlight=True)
+        else:
+          st.markdown(
+              '<div class="mono-scroll" style="color:#ff8533;font-weight:600;'
+              'border-color:rgba(255,106,26,0.35);margin-bottom:6px;">'
+              f"{cipher_str}</div>",
+              unsafe_allow_html=True,
+          )
 
       if enc_res:
 
@@ -859,48 +919,23 @@ with st.container(key="sheet"):
         if enc_res:
           g1, g2 = st.columns(2)
           with g1:
-            st.markdown(
-                tile("p terpilih", enc_res["p"], "o")
-                + tile("n (p × q)", enc_res["n"], "s")
-                + tile("e (eksponen publik)", enc_res["e"], "o"),
-                unsafe_allow_html=True,
-            )
+            copy_tile("p terpilih", enc_res["p"], "o")
+            copy_tile("n (p × q)", enc_res["n"], "s")
+            copy_tile("e (eksponen publik)", enc_res["e"], "o")
           with g2:
-            st.markdown(
-                tile("q terpilih", enc_res["q"], "o")
-                + tile("m = (p − 1)(q − 1)", enc_res["m"], "s")
-                + tile("d (eksponen privat)", enc_res["d"], "o"),
-                unsafe_allow_html=True,
-            )
+            copy_tile("q terpilih", enc_res["q"], "o")
+            copy_tile("m = (p − 1)(q − 1)", enc_res["m"], "s")
+            copy_tile("d (eksponen privat)", enc_res["d"], "o")
 
-          st.markdown(
-              tile("Kode ASCII asli", " ".join(enc_res["ascii_asli"]), "s")
-              + tile("Kode 2 digit (−27)", " ".join(enc_res["kode_2digit"]), "s")
-              + tile("Blok plaintext 3 digit (Pᵢ)", " ".join(enc_res["blok_plain"]), "s"),
-              unsafe_allow_html=True,
-          )
+          copy_tile("Kode ASCII asli", " ".join(enc_res["ascii_asli"]), "s")
+          copy_tile("Kode 2 digit (−27)", " ".join(enc_res["kode_2digit"]), "s")
+          copy_tile("Blok plaintext 3 digit (Pᵢ)", " ".join(enc_res["blok_plain"]), "s")
 
           k1, k2 = st.columns(2)
           with k1:
-            st.markdown(
-                tile(
-                    "Kunci publik (e, n)",
-                    f"({enc_res['e']}, {enc_res['n']})",
-                    "o",
-                    "border-color:rgba(255,106,26,0.35);",
-                ),
-                unsafe_allow_html=True,
-            )
+            copy_tile("Kunci publik (e, n)", f"({enc_res['e']}, {enc_res['n']})", "o", highlight=True)
           with k2:
-            st.markdown(
-                tile(
-                    "Kunci privat (d, n)",
-                    f"({enc_res['d']}, {enc_res['n']})",
-                    "s",
-                    "border-color:rgba(226,232,240,0.28);",
-                ),
-                unsafe_allow_html=True,
-            )
+            copy_tile("Kunci privat (d, n)", f"({enc_res['d']}, {enc_res['n']})", "s")
         else:
           st.markdown(
               '<div class="empty-note">Masukkan teks dan jumlah digit prima di sebelah kiri, '
@@ -969,20 +1004,10 @@ with st.container(key="sheet"):
         card_label("Hasil dekripsi &amp; pemulihan blok", "b")
         dec_res = st.session_state.dec_result
         if dec_res:
-          st.markdown(
-              f"""
-              <div class="tile"><div class="tile-t">Blok plaintext 3 digit (Pᵢ)</div>
-                  <div class="mono-scroll" style="color:#38bdf8;font-weight:600;">{' '.join(dec_res['blok_plain'])}</div></div>
-              <div class="tile"><div class="tile-t">Pᵢ menjadi 2 digit (sebelum +27)</div>
-                  <div class="mono-scroll">{' '.join(dec_res['pi_2digit'])}</div></div>
-              <div class="tile"><div class="tile-t">Kode ASCII asli (+27)</div>
-                  <div class="mono-scroll" style="color:#94a3b8;">{' '.join(dec_res['ascii_dec'])}</div></div>
-              <div class="tile" style="border-color:rgba(56,189,248,0.45);background:rgba(56,189,248,0.07);">
-                  <div class="tile-t" style="color:#38bdf8;">Teks asli final</div>
-                  <div class="mono-scroll" style="color:#fff;font-size:1.05rem;font-weight:700;border-color:rgba(56,189,248,0.4);">{html.escape(dec_res['hasil_teks'])}</div></div>
-              """,
-              unsafe_allow_html=True,
-          )
+          copy_tile("Blok plaintext 3 digit (Pᵢ)", " ".join(dec_res["blok_plain"]), "b")
+          copy_tile("Pᵢ menjadi 2 digit (sebelum +27)", " ".join(dec_res["pi_2digit"]), "s")
+          copy_tile("Kode ASCII asli (+27)", " ".join(dec_res["ascii_dec"]), "s")
+          copy_tile("Teks asli final", dec_res["hasil_teks"], "b", big=True, highlight=True)
         else:
           st.markdown(
               '<div class="empty-note">Masukkan blok ciphertext beserta nilai <b>d</b> dan '
