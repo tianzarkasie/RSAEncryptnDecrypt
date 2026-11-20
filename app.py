@@ -169,7 +169,7 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
     align-items: center;
     justify-content: flex-start;
     text-align: center;
-    padding: 21vh 1rem 0 1rem;
+    padding: 25vh 1rem 0 1rem;
     background:
         linear-gradient(125deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.012) 28%, transparent 55%),
         radial-gradient(ellipse 80% 55% at 50% 108%, rgba(255, 94, 20, 0.38) 0%, rgba(148, 163, 184, 0.09) 42%, transparent 72%),
@@ -226,7 +226,7 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
 }
 
 /* Ruang kosong agar background terlihat penuh sebelum sheet naik menutupinya */
-.hero-spacer { height: 74vh; min-height: 500px; }
+.hero-spacer { height: 88vh; min-height: 560px; }
 
 /* ============================================================================
    SHEET KONTEN: naik menutupi background + mem-blur (z-index di atas background)
@@ -517,6 +517,127 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
     text-align: center; font-size: 0.82rem; color: var(--silver-4);
 }
 
+
+/* ============================================================================
+   TEMA ALA SITUS HOSTING: announcement bar, dropdown, CTA, perks, FAQ, footer
+   ============================================================================ */
+.announce {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+    height: 36px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(90deg, #e84a00, #ff6a1a 40%, #ff8533 70%, #e84a00);
+    font-size: 0.8rem; font-weight: 600; color: #fff;
+    box-shadow: 0 4px 20px rgba(255, 94, 20, 0.35);
+}
+.announce a { color: #fff !important; text-decoration: underline !important; text-underline-offset: 3px; }
+.announce .badge { background: rgba(0,0,0,.28); border-radius: 999px; padding: 2px 9px; font-size: .68rem; letter-spacing: .05em; }
+.topnav { top: 50px !important; }
+.anchor { top: -130px !important; }
+
+.nav-item { position: relative; }
+.nav-item > a .caret { display: inline-block; margin-left: 5px; font-size: .6rem; transition: transform .25s ease; opacity: .7; }
+.nav-item:hover > a .caret { transform: rotate(180deg); }
+.dd-wrap {
+    position: absolute; top: 100%; left: 50%;
+    padding-top: 14px; min-width: 270px;
+    opacity: 0; visibility: hidden;
+    transform: translate(-50%, 10px);
+    transition: opacity .25s ease, transform .25s ease, visibility .25s;
+}
+.nav-item:hover .dd-wrap { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.dd {
+    background: rgba(12, 14, 20, 0.96);
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 18px; padding: 8px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.65);
+    backdrop-filter: blur(20px);
+}
+.dd a { display: flex !important; align-items: center; gap: 12px; padding: 10px 12px !important; border-radius: 12px !important; }
+.dd a::after { display: none !important; }
+.dd a:hover { background: rgba(255,94,20,.1) !important; }
+.dd .ic {
+    width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center;
+    background: rgba(255,94,20,.14); border: 1px solid rgba(255,133,51,.3); font-size: .95rem;
+}
+.dd b { display: block; color: #fff; font-size: .86rem; font-weight: 600; }
+.dd small { display: block; color: var(--silver-3); font-size: .74rem; font-weight: 400; margin-top: 1px; }
+
+.hero-cta { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 1.6rem; }
+.hero-cta a { pointer-events: auto; text-decoration: none !important; font-weight: 600; font-size: .95rem; border-radius: 14px; padding: 13px 26px; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.btn-fire { color: #fff !important; background: linear-gradient(135deg, #ff5500, #ff8533); box-shadow: 0 10px 30px rgba(255,94,20,.45); }
+.btn-fire:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(255,94,20,.65); }
+.btn-ghost { color: #e2e8f0 !important; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18); }
+.btn-ghost:hover { transform: translateY(-3px); border-color: #ff8533; color: #fff !important; }
+.hero-chips { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 1.3rem; max-width: 720px; }
+.hero-chips span { font-size: .78rem; color: var(--silver-2); background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 5px 12px; border-radius: 999px; }
+.hero-chips span::before { content: "✓ "; color: #ff8533; font-weight: 700; }
+
+.sec-eyebrow { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #ff8533; margin-bottom: .6rem; }
+
+.pillar { text-align: left !important; }
+.pillar .ico { font-size: 1.5rem; margin-bottom: 10px; }
+.pillar ul { list-style: none; padding: 0; margin: 14px 0 16px 0; }
+.pillar li { font-size: .84rem; color: var(--silver-2); padding: 3px 0; }
+.pillar li::before { content: "✓"; color: #ff8533; font-weight: 700; margin-right: 8px; }
+.pillar .more { font-size: .86rem; font-weight: 600; color: #ff8533 !important; text-decoration: none !important; }
+.pillar .more:hover { color: #fff !important; }
+
+.panel-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 18px; align-items: stretch; }
+@media (max-width: 900px) { .panel-grid { grid-template-columns: 1fr; } }
+.panel-list { display: grid; gap: 10px; }
+.panel-list div { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px 16px; font-size: .9rem; color: var(--silver-1); transition: all .25s ease; }
+.panel-list div:hover { border-color: rgba(255,115,36,.5); transform: translateX(6px); background: rgba(255,94,20,.07); }
+.panel-list div::before { content: "▸"; color: #ff8533; margin-right: 10px; }
+.console {
+    background: #05060a; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; overflow: hidden;
+    font-family: 'JetBrains Mono', monospace; font-size: .8rem; text-align: left;
+    box-shadow: 0 20px 50px rgba(0,0,0,.55);
+}
+.console .bar { display: flex; gap: 7px; padding: 11px 14px; background: rgba(255,255,255,.04); border-bottom: 1px solid rgba(255,255,255,.07); }
+.console .bar i { width: 10px; height: 10px; border-radius: 50%; background: #ff5f56; }
+.console .bar i:nth-child(2) { background: #ffbd2e; } .console .bar i:nth-child(3) { background: #27c93f; }
+.console .body { padding: 16px 18px; line-height: 1.9; color: var(--silver-2); }
+.console .o { color: #ff8533; } .console .g { color: #4ade80; } .console .m { color: var(--silver-4); }
+
+.grid.g2x3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 900px) { .grid.g2x3 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .grid.g2x3 { grid-template-columns: 1fr; } }
+.perk .ico { width: 44px; height: 44px; margin: 0 auto 12px auto; border-radius: 14px; display: grid; place-items: center; font-size: 1.25rem;
+    background: linear-gradient(135deg, rgba(255,94,20,.2), rgba(255,133,51,.06)); border: 1px solid rgba(255,133,51,.35); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 1rem; }
+@media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat { text-align: center; padding: 16px 8px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); transition: all .3s ease; }
+.stat:hover { border-color: rgba(255,115,36,.5); transform: translateY(-3px); }
+.stat b { display: block; font-size: 1.7rem; font-weight: 800; background: linear-gradient(180deg,#fff,#ff8533); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat span { font-size: .78rem; color: var(--silver-3); }
+
+.faq { max-width: 820px; margin: 0 auto; display: grid; gap: 10px; text-align: left; }
+.faq details { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 0 18px; transition: border-color .25s ease, background .25s ease; }
+.faq details:hover { border-color: rgba(255,115,36,.4); }
+.faq details[open] { border-color: rgba(255,115,36,.55); background: rgba(255,94,20,.05); }
+.faq summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 12px; padding: 16px 0; font-weight: 600; font-size: .95rem; color: #fff; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "+"; width: 24px; height: 24px; flex: none; display: grid; place-items: center; border-radius: 8px; background: rgba(255,94,20,.18); color: #ff8533; font-weight: 700; transition: transform .3s ease; }
+.faq details[open] summary::before { content: "–"; transform: rotate(180deg); }
+.faq p { margin: 0 0 16px 36px; font-size: .88rem; line-height: 1.7; color: var(--silver-3); }
+
+.cta-banner {
+    position: relative; overflow: hidden; text-align: center; margin-top: 3rem; padding: 2.6rem 1.5rem;
+    border-radius: 26px; border: 1px solid rgba(255,133,51,.35);
+    background: radial-gradient(ellipse at 50% 120%, rgba(255,94,20,.45), transparent 65%), linear-gradient(135deg, rgba(255,94,20,.12), rgba(15,17,24,.9));
+}
+.cta-banner h3 { margin: 0 0 .5rem 0; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; color: #fff; letter-spacing: -.02em; }
+.cta-banner p { margin: 0 0 1.4rem 0; color: var(--silver-2); font-size: .95rem; }
+.cta-banner a { display: inline-block; text-decoration: none !important; font-weight: 600; padding: 13px 28px; border-radius: 14px; }
+
+.mega-footer { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 28px; text-align: left; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,.08); }
+@media (max-width: 760px) { .mega-footer { grid-template-columns: 1fr 1fr; } }
+.mega-footer h5 { margin: 0 0 12px 0; font-size: .78rem; text-transform: uppercase; letter-spacing: .1em; color: #fff; }
+.mega-footer a { display: block; padding: 4px 0; font-size: .86rem; color: var(--silver-3) !important; text-decoration: none !important; transition: color .2s ease, transform .2s ease; }
+.mega-footer a:hover { color: #ff8533 !important; transform: translateX(4px); }
+.mega-footer p { font-size: .86rem; line-height: 1.7; color: var(--silver-3); margin: 10px 0 0 0; }
+.copyright { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,.06); text-align: center; font-size: .8rem; color: var(--silver-4); }
+
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
 }
@@ -734,15 +855,28 @@ b.addEventListener('click',async()=>{{
 # ==============================================================================
 st.markdown(
     """
+<div class="announce"><span class="badge">BARU</span>
+    Tombol salin sekali klik kini ada di semua hasil enkripsi &amp; dekripsi
+    <a href="#workspace" target="_self">Coba sekarang →</a></div>
 <nav class="topnav">
     <a class="nav-brand" href="#beranda" target="_self">
         <span class="nav-logo">R</span> RSA Studio
     </a>
     <div class="nav-links">
-        <a href="#beranda" target="_self">Beranda</a>
-        <a href="#workspace" target="_self">Enkripsi &amp; Dekripsi</a>
-        <a href="#cara-kerja" target="_self">Cara Kerja</a>
-        <a href="#tim" target="_self">Tim</a>
+        <div class="nav-item"><a href="#workspace" target="_self">Alat<span class="caret">▼</span></a>
+            <div class="dd-wrap"><div class="dd">
+                <a href="#workspace" target="_self"><span class="ic">🔒</span><span><b>Enkripsi</b><small>Bangkitkan kunci &amp; sandikan pesan</small></span></a>
+                <a href="#workspace" target="_self"><span class="ic">🔓</span><span><b>Dekripsi</b><small>Pulihkan teks dari ciphertext</small></span></a>
+                <a href="#fitur" target="_self"><span class="ic">🔑</span><span><b>Pasangan kunci</b><small>Kunci publik (e, n) &amp; privat (d, n)</small></span></a>
+            </div></div></div>
+        <div class="nav-item"><a href="#cara-kerja" target="_self">Belajar<span class="caret">▼</span></a>
+            <div class="dd-wrap"><div class="dd">
+                <a href="#cara-kerja" target="_self"><span class="ic">📘</span><span><b>Cara kerja RSA</b><small>Empat langkah dari teks ke cipher</small></span></a>
+                <a href="#keunggulan" target="_self"><span class="ic">⚡</span><span><b>Keunggulan</b><small>Fitur utama RSA Studio</small></span></a>
+                <a href="#faq" target="_self"><span class="ic">❓</span><span><b>FAQ</b><small>Pertanyaan yang sering muncul</small></span></a>
+            </div></div></div>
+        <div class="nav-item"><a href="#fitur" target="_self">Fitur</a></div>
+        <div class="nav-item"><a href="#tim" target="_self">Tim</a></div>
     </div>
     <a class="nav-cta" href="#workspace" target="_self">Mulai Sekarang</a>
 </nav>
@@ -768,6 +902,13 @@ st.markdown(
     <div class="hero-sub">
         Bangkitkan kunci publik dan privat, enkripsi pesan teks, lalu dekripsi kembali
         dengan rincian setiap langkahnya.
+    </div>
+    <div class="hero-cta">
+        <a class="btn-fire" href="#workspace" target="_self">Mulai Enkripsi</a>
+        <a class="btn-ghost" href="#cara-kerja" target="_self">Pelajari Cara Kerja</a>
+    </div>
+    <div class="hero-chips">
+        <span>Hasil instan</span><span>Prima 1–24 digit</span><span>Tombol salin</span><span>Tanpa akun</span><span>Langkah terperinci</span>
     </div>
     <div class="hero-arc"></div>
 </div>
@@ -1017,14 +1158,81 @@ with st.container(key="sheet"):
           )
 
   # ==============================================================================
-  # 10. CARA KERJA
+  # 10. KEUNGGULAN, FITUR, CARA KERJA, TIM, FAQ, CTA, FOOTER
   # ==============================================================================
   st.markdown(
       """
+  <span id="keunggulan" class="anchor"></span>
+  <div class="sec-head">
+      <span class="sec-eyebrow">Satu alat, tiga kebutuhan</span>
+      <h2>Enkripsi RSA yang mudah dipahami.</h2>
+      <p>Dari membangkitkan kunci sampai memulihkan pesan, semuanya dalam satu halaman.</p>
+  </div>
+  <div class="grid g3">
+      <div class="info-card pillar"><div class="ico">🔒</div><h4>Enkripsi</h4>
+          <p>Ubah teks menjadi blok angka lalu sandikan dengan kunci publik.</p>
+          <ul><li>Prima acak 1–24 digit</li><li>Uji prima Miller-Rabin</li><li>Rincian p, q, n, m, e, d</li></ul>
+          <a class="more" href="#workspace" target="_self">Buka enkripsi →</a></div>
+      <div class="info-card pillar"><div class="ico">🔓</div><h4>Dekripsi</h4>
+          <p>Pulihkan pesan asli dari ciphertext dengan kunci privat.</p>
+          <ul><li>Tempel cipher, d, dan n</li><li>Lihat tiap langkah konversi</li><li>Pesan error yang jelas</li></ul>
+          <a class="more" href="#workspace" target="_self">Buka dekripsi →</a></div>
+      <div class="info-card pillar"><div class="ico">🔑</div><h4>Manajemen kunci</h4>
+          <p>Pasangan kunci tampil lengkap dan siap disalin.</p>
+          <ul><li>Kunci publik (e, n)</li><li>Kunci privat (d, n)</li><li>Kirim ke tab Decrypt</li></ul>
+          <a class="more" href="#fitur" target="_self">Lihat fitur →</a></div>
+  </div>
+
+  <span id="fitur" class="anchor"></span>
+  <div class="sec-head">
+      <span class="sec-eyebrow">Panel kerja</span>
+      <h2>Panel yang langsung bisa dipakai.</h2>
+      <p>Dirancang supaya kamu fokus pada angkanya, bukan pada antarmukanya.</p>
+  </div>
+  <div class="panel-grid">
+      <div class="panel-list">
+          <div>Switch Encrypt/Decrypt dengan kapsul yang bergeser mulus</div>
+          <div>Tombol salin sekali klik di setiap nilai hasil</div>
+          <div>Nilai panjang tetap rapi dan bisa digeser ke samping</div>
+          <div>Kirim ciphertext dan kunci ke tab Decrypt otomatis</div>
+          <div>Rincian ASCII, kode 2 digit, dan blok 3 digit</div>
+      </div>
+      <div class="console">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <div class="body">
+              <span class="m">$</span> rsa --encrypt <span class="o">"halooo"</span><br>
+              <span class="m">›</span> prima p, q dibangkitkan <span class="g">✓</span><br>
+              <span class="m">›</span> n = p × q, m = (p−1)(q−1) <span class="g">✓</span><br>
+              <span class="m">›</span> e dipilih, d dihitung <span class="g">✓</span><br>
+              <span class="m">›</span> ciphertext siap disalin <span class="g">✓</span><br>
+              <span class="o">▍</span>
+          </div>
+      </div>
+  </div>
+
+  <div class="sec-head">
+      <span class="sec-eyebrow">Keunggulan</span>
+      <h2>Fitur yang membuat belajar RSA lebih cepat.</h2>
+  </div>
+  <div class="grid g2x3">
+      <div class="info-card perk"><div class="ico">⚡</div><h4>Hasil instan</h4><p>Kunci dan ciphertext muncul begitu tombol ditekan.</p></div>
+      <div class="info-card perk"><div class="ico">🧮</div><h4>Miller-Rabin</h4><p>Pengujian bilangan prima deterministik yang akurat.</p></div>
+      <div class="info-card perk"><div class="ico">📏</div><h4>1–24 digit</h4><p>Pilih panjang prima sesuai kebutuhan latihanmu.</p></div>
+      <div class="info-card perk"><div class="ico">📋</div><h4>Salin sekali klik</h4><p>Tempel kunci dan cipher panjang tanpa menyeleksi manual.</p></div>
+      <div class="info-card perk"><div class="ico">🧾</div><h4>Langkah terperinci</h4><p>Setiap tahap konversi ditampilkan, bukan hanya hasil akhir.</p></div>
+      <div class="info-card perk"><div class="ico">🚫</div><h4>Tanpa akun</h4><p>Langsung pakai, tanpa registrasi dan tanpa database.</p></div>
+  </div>
+  <div class="stats">
+      <div class="stat"><b>24</b><span>digit prima maksimum</span></div>
+      <div class="stat"><b>95</b><span>karakter ASCII didukung</span></div>
+      <div class="stat"><b>3</b><span>digit per blok</span></div>
+      <div class="stat"><b>0</b><span>akun yang dibutuhkan</span></div>
+  </div>
+
   <span id="cara-kerja" class="anchor"></span>
   <div class="sec-head">
-      <h2>Cara kerja</h2>
-      <p>Empat langkah dari teks biasa sampai ciphertext.</p>
+      <span class="sec-eyebrow">Cara kerja</span>
+      <h2>Empat langkah dari teks sampai ciphertext.</h2>
   </div>
   <div class="grid g4">
       <div class="info-card"><div class="step">1</div><h4>Ubah teks ke blok</h4>
@@ -1034,28 +1242,53 @@ with st.container(key="sheet"):
       <div class="info-card"><div class="step">3</div><h4>Enkripsi</h4>
           <p>Setiap blok plaintext dihitung dengan <code>C = P^e mod n</code>. Hasilnya adalah deretan angka ciphertext.</p></div>
       <div class="info-card"><div class="step">4</div><h4>Dekripsi</h4>
-          <p>Dengan <code>P = C^d mod n</code> blok kembali ke bentuk semula, lalu ditambah 27 dan dikonversi kembali menjadi huruf.</p></div>
+          <p>Dengan <code>P = C^d mod n</code> blok kembali ke bentuk semula, lalu ditambah 27 dan dikonversi menjadi huruf.</p></div>
   </div>
-  """,
-      unsafe_allow_html=True,
-  )
 
-  # ==============================================================================
-  # 11. TIM
-  # ==============================================================================
-  st.markdown(
-      """
   <span id="tim" class="anchor"></span>
   <div class="sec-head">
-      <h2>Tim pembuat</h2>
-      <p>Dikerjakan oleh tiga orang.</p>
+      <span class="sec-eyebrow">Tim</span>
+      <h2>Dibuat oleh tiga orang.</h2>
   </div>
   <div class="grid g3">
       <div class="info-card member"><div class="avatar">CZ</div><h4>Christian Zarkasie</h4><div class="nim">(002)</div></div>
       <div class="info-card member"><div class="avatar">CP</div><h4>Clifton Pratomo</h4><div class="nim">(005)</div></div>
       <div class="info-card member"><div class="avatar">NT</div><h4>I Nyoman Tisna Satya Wijaya</h4><div class="nim">(042)</div></div>
   </div>
-  <div class="footer">RSA Studio · Kriptografi asimetris dengan offset −27</div>
+
+  <span id="faq" class="anchor"></span>
+  <div class="sec-head">
+      <span class="sec-eyebrow">FAQ</span>
+      <h2>Pertanyaan yang sering muncul.</h2>
+      <p>Tidak menemukan jawabanmu? Tanyakan ke tim lewat dosen pembimbing.</p>
+  </div>
+  <div class="faq">
+      <details><summary>Apakah ini aman untuk data sungguhan?</summary>
+          <p>Tidak. Alat ini untuk belajar. Kunci RSA aman butuh bilangan prima jauh lebih panjang (sekitar 2048 bit) dan skema padding. Pembatasan 24 digit di sini sengaja dibuat agar hasilnya mudah diikuti.</p></details>
+      <details><summary>Kenapa dikurangi 27 dan dibagi blok 3 digit?</summary>
+          <p>Kode ASCII cetak (32–126) dikurangi 27 menjadi 5–99, sehingga selalu 2 digit. Digit digabung lalu dipotong per 3 agar setiap blok lebih kecil dari n (syarat n &gt; 999).</p></details>
+      <details><summary>Mana kunci publik dan mana kunci privat?</summary>
+          <p>Kunci publik adalah pasangan (e, n) untuk mengenkripsi. Kunci privat adalah (d, n) untuk mendekripsi. Bagikan hanya yang publik.</p></details>
+      <details><summary>Kenapa hasil dekripsi gagal atau berbentuk aneh?</summary>
+          <p>Biasanya nilai d atau n tidak cocok dengan kunci yang dipakai saat enkripsi, atau ciphertext terpotong. Gunakan tombol kirim ke tab Decrypt agar nilainya terisi otomatis.</p></details>
+      <details><summary>Karakter apa saja yang didukung?</summary>
+          <p>Huruf besar dan kecil, angka, spasi, dan tanda baca ASCII 32–126. Karakter di luar itu (misalnya emoji) akan ditolak dengan pesan error.</p></details>
+  </div>
+
+  <div class="cta-banner">
+      <h3>Siap mencoba enkripsi RSA?</h3>
+      <p>Bangkitkan kunci dan sandikan pesan pertamamu dalam hitungan detik.</p>
+      <a class="btn-fire" href="#workspace" target="_self">Mulai Sekarang</a>
+  </div>
+
+  <div class="mega-footer">
+      <div><div class="nav-brand"><span class="nav-logo">R</span> RSA Studio</div>
+          <p>Alat belajar kriptografi asimetris dengan offset −27, dibuat untuk memahami RSA langkah demi langkah.</p></div>
+      <div><h5>Alat</h5><a href="#workspace" target="_self">Enkripsi</a><a href="#workspace" target="_self">Dekripsi</a><a href="#fitur" target="_self">Pasangan kunci</a></div>
+      <div><h5>Belajar</h5><a href="#cara-kerja" target="_self">Cara kerja</a><a href="#keunggulan" target="_self">Keunggulan</a><a href="#faq" target="_self">FAQ</a></div>
+      <div><h5>Tim</h5><a href="#tim" target="_self">Christian Zarkasie</a><a href="#tim" target="_self">Clifton Pratomo</a><a href="#tim" target="_self">I Nyoman Tisna S. W.</a></div>
+  </div>
+  <div class="copyright">© 2026 RSA Studio · Dibuat untuk tujuan edukasi</div>
   """,
       unsafe_allow_html=True,
   )
