@@ -263,8 +263,8 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
     display: flex !important;
     flex-wrap: nowrap !important;
     gap: 0 !important;
-    width: 440px;
-    max-width: 92vw;
+    width: 100%;
+    max-width: 440px;
     margin: 0 auto;
     padding: 7px;
     background: rgba(15, 17, 24, 0.92);
@@ -606,7 +606,6 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
     background: linear-gradient(135deg, rgba(255,94,20,.2), rgba(255,133,51,.06)); border: 1px solid rgba(255,133,51,.35); }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 1rem; }
-@media (max-width: 720px) { .stats { grid-template-columns: repeat(2, 1fr); } }
 .stat { text-align: center; padding: 16px 8px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); transition: all .3s ease; }
 .stat:hover { border-color: rgba(255,115,36,.5); transform: translateY(-3px); }
 .stat b { display: block; font-size: 1.7rem; font-weight: 800; background: linear-gradient(180deg,#fff,#ffa24a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -638,6 +637,49 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
 .mega-footer a:hover { color: #ffa24a !important; transform: translateX(4px); }
 .mega-footer p { font-size: .86rem; line-height: 1.7; color: var(--silver-3); margin: 10px 0 0 0; }
 .copyright { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid rgba(255,255,255,.06); text-align: center; font-size: .8rem; color: var(--silver-4); }
+
+
+/* ============================================================================
+   RESPONSIF (HP, tablet, desktop) - tidak boleh ada scroll horizontal
+   ============================================================================ */
+html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+.block-container, .st-key-sheet { box-sizing: border-box; max-width: 100%; }
+.st-key-sheet { overflow-x: clip; }
+.st-key-sheet img, .st-key-sheet iframe { max-width: 100%; }
+
+@media (max-width: 820px) {
+    .block-container { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+    .topnav { width: calc(100% - 20px); padding: 7px 8px 7px 12px; top: 10px !important; }
+    .nav-cta { padding: 8px 14px; font-size: 0.8rem; }
+    .anchor { top: -90px !important; }
+    .hero-spacer { height: 78vh; min-height: 460px; }
+    .bg-fixed { padding-top: 18vh; }
+    .hero-sub { font-size: 0.92rem; padding: 0 0.5rem; }
+    .hero-cta a { padding: 12px 20px; font-size: 0.88rem; }
+    .sec-head { margin: 2.4rem 0 1.1rem 0; }
+    .grid { gap: 10px; }
+    .panel-list div:hover { transform: none; }
+    .mega-footer { grid-template-columns: 1fr 1fr; gap: 20px; }
+    .mega-footer > div:first-child { grid-column: 1 / -1; }
+    .cta-banner { padding: 2rem 1rem; border-radius: 20px; }
+}
+@media (max-width: 640px) {
+    .stats { gap: 8px; }
+    .stat { padding: 12px 4px; }
+    .stat b { font-size: 1.35rem; }
+    .stat span { font-size: 0.68rem; line-height: 1.3; display: block; }
+    .st-key-switchwrap { margin-bottom: 1.4rem; }
+    .st-key-switchwrap div[data-testid="stButton"] > button[kind] { padding: 0.8rem 0 !important; }
+    .st-key-switchwrap div[data-testid="stButton"] > button[kind] p { font-size: 1rem !important; }
+    [class*="st-key-card"] { padding: 12px 12px 8px 12px; }
+    .console { font-size: 0.72rem; }
+    .console .body { padding: 12px 14px; overflow-x: auto; white-space: nowrap; }
+    .faq p { margin-left: 0; }
+    .faq summary { font-size: 0.9rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
