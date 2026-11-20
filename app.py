@@ -855,9 +855,6 @@ b.addEventListener('click',async()=>{{
 # ==============================================================================
 st.markdown(
     """
-<div class="announce"><span class="badge">BARU</span>
-    Tombol salin sekali klik kini ada di semua hasil enkripsi &amp; dekripsi
-    <a href="#workspace" target="_self">Coba sekarang →</a></div>
 <nav class="topnav">
     <a class="nav-brand" href="#beranda" target="_self">
         <span class="nav-logo">R</span> RSA Studio
@@ -907,10 +904,6 @@ st.markdown(
         <a class="btn-fire" href="#workspace" target="_self">Mulai Enkripsi</a>
         <a class="btn-ghost" href="#cara-kerja" target="_self">Pelajari Cara Kerja</a>
     </div>
-    <div class="hero-chips">
-        <span>Hasil instan</span><span>Prima 1–24 digit</span><span>Tombol salin</span><span>Tanpa akun</span><span>Langkah terperinci</span>
-    </div>
-    <div class="hero-arc"></div>
 </div>
 <div class="hero-spacer"><span id="beranda" class="anchor"></span></div>
 """,
