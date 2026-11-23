@@ -1,3 +1,4 @@
+import hashlib
 import html
 import json
 import math
@@ -264,7 +265,7 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
     flex-wrap: nowrap !important;
     gap: 0 !important;
     width: 100%;
-    max-width: 440px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 7px;
     background: rgba(15, 17, 24, 0.92);
@@ -275,12 +276,12 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
 }
 .st-key-switchwrap [data-testid="stHorizontalBlock"]:hover { border-color: rgba(255, 255, 255, 0.34); }
 
-/* Kapsul bergerak: tepat setengah dari area dalam */
+/* Kapsul bergerak: tepat sepertiga dari area dalam (3 tombol) */
 .st-key-switchwrap [data-testid="stHorizontalBlock"]::before {
     content: "";
     position: absolute;
     top: 7px; bottom: 7px; left: 7px;
-    width: calc(50% - 7px);
+    width: calc((100% - 14px) / 3);
     border-radius: 999px;
     z-index: -1;
     pointer-events: none;
@@ -289,7 +290,7 @@ header[data-testid="stHeader"], footer { visibility: hidden; height: 0; }
 
 .st-key-switchwrap [data-testid="stColumn"] {
     flex: 1 1 0 !important;
-    width: 50% !important;
+    width: 33.3333% !important;
     min-width: 0 !important;
 }
 .st-key-switchwrap [data-testid="stElementContainer"],
@@ -673,12 +674,70 @@ html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
     .stat span { font-size: 0.68rem; line-height: 1.3; display: block; }
     .st-key-switchwrap { margin-bottom: 1.4rem; }
     .st-key-switchwrap div[data-testid="stButton"] > button[kind] { padding: 0.8rem 0 !important; }
-    .st-key-switchwrap div[data-testid="stButton"] > button[kind] p { font-size: 1rem !important; }
+    .st-key-switchwrap div[data-testid="stButton"] > button[kind] p { font-size: 0.9rem !important; }
     [class*="st-key-card"] { padding: 12px 12px 8px 12px; }
     .console { font-size: 0.72rem; }
     .console .body { padding: 12px 14px; overflow-x: auto; white-space: nowrap; }
     .faq p { margin-left: 0; }
     .faq summary { font-size: 0.9rem; }
+}
+
+/* ============================================================================
+   MODE DIGITAL SIGNATURE
+   ============================================================================ */
+.dot.g { background: #34d399; box-shadow: 0 0 8px #34d399; }
+
+div[data-testid="stTextArea"] textarea {
+    background-color: rgba(7, 8, 12, 0.9) !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 12px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.88rem !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+div[data-testid="stTextArea"] textarea:hover { border-color: rgba(255, 255, 255, 0.3) !important; }
+div[data-testid="stTextArea"] textarea:focus {
+    border-color: #34d399 !important;
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25) !important;
+}
+
+.sig-head {
+    display: flex; align-items: center; gap: 12px;
+    margin: 0.4rem 0 1rem 0;
+}
+.sig-head .num {
+    width: 30px; height: 30px; flex: none; border-radius: 10px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, #10b981, #34d399);
+    font-weight: 700; font-size: 0.85rem; color: #fff;
+    box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
+}
+.sig-head h3 { margin: 0; padding: 0; font-size: 1.05rem; font-weight: 700; color: #fff; }
+.sig-head p { margin: 2px 0 0 0; font-size: 0.8rem; color: var(--silver-3); }
+.sig-sep { height: 1px; margin: 1.8rem 0 1.6rem 0; background: linear-gradient(90deg, transparent, rgba(52,211,153,.35), transparent); }
+
+.flow {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px;
+    margin: -0.6rem 0 1.6rem 0;
+    font-size: 0.78rem; color: var(--silver-2);
+}
+.flow span { background: rgba(52,211,153,.08); border: 1px solid rgba(52,211,153,.28); padding: 5px 12px; border-radius: 999px; }
+.flow i { font-style: normal; color: #34d399; font-weight: 700; }
+
+.verdict {
+    display: flex; align-items: flex-start; gap: 14px;
+    border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+}
+.verdict .ic { font-size: 1.5rem; line-height: 1; }
+.verdict b { display: block; font-size: 1rem; color: #fff; margin-bottom: 3px; }
+.verdict small { display: block; font-size: 0.82rem; line-height: 1.55; color: var(--silver-2); }
+.verdict.ok { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(52, 211, 153, 0.55); box-shadow: 0 0 30px rgba(16,185,129,.15); }
+.verdict.bad { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(248, 113, 113, 0.6); box-shadow: 0 0 30px rgba(239,68,68,.15); }
+.tamper-note {
+    font-size: 0.8rem; color: #fca5a5; background: rgba(239,68,68,.08);
+    border: 1px dashed rgba(248,113,113,.45); border-radius: 10px;
+    padding: 8px 12px; margin-bottom: 12px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -805,6 +864,89 @@ def blok3_ke_teks_detail(blok_3):
   return kode_2digit, ascii_list, "".join(karakter)
 
 
+# ------------------------------------------------------------------------------
+# DIGITAL SIGNATURE (hash SHA-256 -> digest -> ditandatangani dengan kunci privat)
+# ------------------------------------------------------------------------------
+DIGEST_DIGIT = 78  # 2^256 < 10^78, jadi digest SHA-256 selalu muat dalam 78 digit
+DIGEST_BLOK = DIGEST_DIGIT // 3  # 26 blok 3 digit (setiap blok < 1000 < n)
+
+
+def bangkitkan_kunci(digit_p: int, digit_q: int) -> dict:
+  """Membangkitkan pasangan kunci RSA (n > 999 agar blok 3 digit aman)."""
+  while True:
+    p_val = generate_random_prime(int(digit_p))
+    q_val = generate_random_prime(int(digit_q), exclude=p_val)
+    n_val = p_val * q_val
+    if n_val > 999:
+      break
+  m_val = (p_val - 1) * (q_val - 1)
+  e_val = generate_random_e(m_val)
+  d_val = pow(e_val, -1, m_val)
+  return {"p": p_val, "q": q_val, "n": n_val, "m": m_val, "e": e_val, "d": d_val}
+
+
+def hash_dokumen(dokumen: str):
+  """Dokumen -> digest SHA-256 (hex), versi desimal 78 digit, dan 26 blok 3 digit."""
+  digest_hex = hashlib.sha256(dokumen.encode("utf-8")).hexdigest()
+  digest_dec = str(int(digest_hex, 16)).zfill(DIGEST_DIGIT)
+  blok = [digest_dec[i : i + 3] for i in range(0, DIGEST_DIGIT, 3)]
+  return digest_hex, digest_dec, blok
+
+
+def tandatangani(dokumen: str, kunci: dict) -> dict:
+  """Sᵢ = Hᵢ^d mod n untuk setiap blok digest."""
+  digest_hex, digest_dec, blok_h = hash_dokumen(dokumen)
+  blok_s = [str(pow(int(h), kunci["d"], kunci["n"])) for h in blok_h]
+  return {
+      **kunci,
+      "dokumen": dokumen,
+      "digest_hex": digest_hex,
+      "digest_dec": digest_dec,
+      "blok_h": blok_h,
+      "blok_s": blok_s,
+  }
+
+
+def verifikasi(dokumen: str, sig_str: str, e_str: str, n_str: str) -> dict:
+  """Hitung ulang hash dokumen, lalu bandingkan dengan Sᵢ^e mod n."""
+  blok_s = sig_str.strip().split()
+  if not blok_s or not all(s.isdigit() for s in blok_s):
+    raise ValueError("Format tanda tangan tidak valid. Masukkan angka yang dipisah spasi.")
+  if not e_str.strip().isdigit() or not n_str.strip().isdigit():
+    raise ValueError("Nilai e dan n harus berupa bilangan bulat positif.")
+  e_val, n_val = int(e_str.strip()), int(n_str.strip())
+  if n_val <= 999:
+    raise ValueError("Nilai n harus lebih besar dari 999.")
+
+  digest_hex, digest_dec, blok_hitung = hash_dokumen(dokumen)
+  blok_dari_sig = []
+  for s in blok_s:
+    h = pow(int(s), e_val, n_val)
+    blok_dari_sig.append(f"{h:03d}" if h <= 999 else str(h))
+
+  panjang_sama = len(blok_dari_sig) == len(blok_hitung)
+  beda = sum(1 for a, b in zip(blok_hitung, blok_dari_sig) if a != b)
+  beda += abs(len(blok_dari_sig) - len(blok_hitung))
+  valid = panjang_sama and beda == 0
+
+  gabungan_sig = "".join(blok_dari_sig)
+  hex_dari_sig = "—"
+  if panjang_sama and all(len(b) == 3 for b in blok_dari_sig):
+    nilai = int(gabungan_sig)
+    if nilai < 2**256:
+      hex_dari_sig = format(nilai, "064x")
+
+  return {
+      "valid": valid,
+      "beda": beda,
+      "jumlah_blok_sig": len(blok_dari_sig),
+      "digest_hex": digest_hex,
+      "blok_hitung": blok_hitung,
+      "blok_dari_sig": blok_dari_sig,
+      "hex_dari_sig": hex_dari_sig,
+  }
+
+
 # ==============================================================================
 # 4. SESSION STATE
 # ==============================================================================
@@ -819,6 +961,17 @@ st.session_state.setdefault("sv_digit_q", 4)
 st.session_state.setdefault("sv_dec_cipher", "")
 st.session_state.setdefault("sv_dec_d", "")
 st.session_state.setdefault("sv_dec_n", "")
+# Digital signature
+st.session_state.setdefault("sig_result", None)
+st.session_state.setdefault("ver_result", None)
+st.session_state.setdefault("ver_note", "")
+st.session_state.setdefault("sv_sig_text", "Saya setuju membayar Rp1.000.000 kepada Budi.")
+st.session_state.setdefault("sv_sig_digit_p", 4)
+st.session_state.setdefault("sv_sig_digit_q", 4)
+st.session_state.setdefault("sv_ver_text", "")
+st.session_state.setdefault("sv_ver_sig", "")
+st.session_state.setdefault("sv_ver_e", "")
+st.session_state.setdefault("sv_ver_n", "")
 
 
 def sync(name: str) -> None:
@@ -848,9 +1001,11 @@ def copy_tile(
 ) -> None:
   """Kotak nilai dengan tombol Salin (clipboard). Nilai panjang bisa digeser."""
   value = str(value)
-  colors = {"o": "#ffa24a", "s": "#e2e8f0", "b": "#38bdf8"}
-  accent = "#38bdf8" if st.session_state.mode_selector == "Decrypt" else "#ffa24a"
-  accent_rgb = "56,189,248" if accent == "#38bdf8" else "255,133,51"
+  colors = {"o": "#ffa24a", "s": "#e2e8f0", "b": "#38bdf8", "g": "#34d399"}
+  accent, accent_rgb = {
+      "Decrypt": ("#38bdf8", "56,189,248"),
+      "Signature": ("#34d399", "52,211,153"),
+  }.get(st.session_state.mode_selector, ("#ffa24a", "255,133,51"))
   border = f"rgba({accent_rgb},0.5)" if highlight else "rgba(255,255,255,0.09)"
   bg = f"rgba({accent_rgb},0.08)" if highlight else "rgba(9,11,16,0.85)"
   size = "1.05rem" if big else "0.88rem"
@@ -907,6 +1062,7 @@ st.markdown(
             <div class="dd-wrap"><div class="dd">
                 <a href="#workspace" target="_self"><span class="ic">🔒</span><span><b>Enkripsi</b><small>Bangkitkan kunci &amp; sandikan pesan</small></span></a>
                 <a href="#workspace" target="_self"><span class="ic">🔓</span><span><b>Dekripsi</b><small>Pulihkan teks dari ciphertext</small></span></a>
+                <a href="#workspace" target="_self"><span class="ic">✍️</span><span><b>Tanda tangan digital</b><small>Hash SHA-256 + kunci privat</small></span></a>
                 <a href="#fitur" target="_self"><span class="ic">🔑</span><span><b>Pasangan kunci</b><small>Kunci publik (e, n) &amp; privat (d, n)</small></span></a>
             </div></div></div>
         <div class="nav-item"><a href="#cara-kerja" target="_self">Belajar<span class="caret">▼</span></a>
@@ -940,8 +1096,8 @@ st.markdown(
     <div class="hero-pill"><b>RSA ENGINE</b><span>Kriptografi asimetris dengan offset −27</span></div>
     <h1 class="hero-title">RSA Encrypt &amp; Decrypt</h1>
     <div class="hero-sub">
-        Bangkitkan kunci publik dan privat, enkripsi pesan teks, lalu dekripsi kembali
-        dengan rincian setiap langkahnya.
+        Bangkitkan kunci publik dan privat, enkripsi pesan teks, dekripsi kembali,
+        dan buat tanda tangan digital, lengkap dengan rincian setiap langkahnya.
     </div>
     <div class="hero-cta">
         <a class="btn-fire" href="#workspace" target="_self">Mulai Enkripsi</a>
@@ -967,6 +1123,18 @@ if selected_mode == "Decrypt":
       "div[data-testid=\"stButton\"] > button[kind=\"primary\"]{background:linear-gradient(135deg,#0ea5e9 0%,#818cf8 100%) !important;box-shadow:0 8px 25px rgba(56,189,248,.35) !important;}"
       "div[data-testid=\"stButton\"] > button[kind=\"primary\"]:hover{box-shadow:0 12px 32px rgba(56,189,248,.55) !important;}"
   )
+elif selected_mode == "Signature":
+  theme_css = (
+      _thumb
+      + "transform:translateX(200%);background:linear-gradient(135deg,#10b981 0%,#34d399 60%,#6ee7b7 100%);"
+      "box-shadow:0 0 28px rgba(52,211,153,.55),inset 0 1px 1px rgba(255,255,255,.5);}"
+      + _btn % "sw_sig"
+      + '[class*="st-key-card"]:hover{border-color:rgba(52,211,153,.4) !important;}'
+      "div[data-testid=\"stTextInput\"] input:focus,div[data-testid=\"stNumberInput\"] input:focus{border-color:#34d399 !important;box-shadow:0 0 0 2px rgba(52,211,153,.25) !important;}"
+      "div[data-testid=\"stButton\"] > button[kind=\"primary\"]{background:linear-gradient(135deg,#059669 0%,#34d399 100%) !important;box-shadow:0 8px 25px rgba(16,185,129,.35) !important;}"
+      "div[data-testid=\"stButton\"] > button[kind=\"primary\"]:hover{box-shadow:0 12px 32px rgba(16,185,129,.55) !important;}"
+      "div[data-testid=\"stButton\"] > button[kind=\"secondary\"]:hover{border-color:#34d399 !important;}"
+  )
 else:
   theme_css = (
       _thumb
@@ -983,7 +1151,7 @@ with st.container(key="sheet"):
   st.markdown('<span id="workspace" class="anchor"></span>', unsafe_allow_html=True)
 
   with st.container(key="switchwrap"):
-    sc1, sc2 = st.columns(2, gap="small")
+    sc1, sc2, sc3 = st.columns(3, gap="small")
     with sc1:
       st.button(
           "Encrypt", key="sw_enc", on_click=set_mode, args=("Encrypt",),
@@ -992,6 +1160,11 @@ with st.container(key="sheet"):
     with sc2:
       st.button(
           "Decrypt", key="sw_dec", on_click=set_mode, args=("Decrypt",),
+          use_container_width=True,
+      )
+    with sc3:
+      st.button(
+          "Signature", key="sw_sig", on_click=set_mode, args=("Signature",),
           use_container_width=True,
       )
 
@@ -1132,7 +1305,7 @@ with st.container(key="sheet"):
   # ==============================================================================
   # 9. MODE DECRYPT
   # ==============================================================================
-  else:
+  elif selected_mode == "Decrypt":
     d_left, d_right = st.columns([1.05, 1], gap="large")
 
     with d_left:
@@ -1207,6 +1380,303 @@ with st.container(key="sheet"):
               '<div class="empty-note">Masukkan blok ciphertext beserta nilai <b>d</b> dan '
               "<b>n</b> di sebelah kiri, lalu tekan <b>Dekripsi ciphertext</b> untuk melihat "
               "blok plaintext, konversi Pᵢ 2 digit, dan teks aslinya.</div>",
+              unsafe_allow_html=True,
+          )
+
+  # ==============================================================================
+  # 9b. MODE DIGITAL SIGNATURE
+  # ==============================================================================
+  else:
+
+    def set_field(name: str, value: str) -> None:
+      """Ubah nilai input & reset widget-nya supaya nilai baru tampil."""
+      st.session_state["sv_" + name] = value
+      st.session_state.pop("w_" + name, None)
+
+    st.markdown(
+        '<div class="flow"><span>Dokumen</span><i>→</i><span>SHA-256</span><i>→</i>'
+        "<span>Digest</span><i>→</i><span>Hᵢ<sup>d</sup> mod n</span><i>→</i>"
+        "<span>Tanda tangan</span></div>",
+        unsafe_allow_html=True,
+    )
+
+    # ---------------------------- SISI PENANDA TANGAN ----------------------------
+    st.markdown(
+        '<div class="sig-head"><div class="num">A</div><div>'
+        "<h3>Sisi penanda tangan · Membuat tanda tangan</h3>"
+        "<p>Dokumen di-hash menjadi digest, lalu digest dikunci dengan kunci privat (d, n).</p>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+    s_left, s_right = st.columns([1.05, 1], gap="large")
+
+    with s_left:
+      with st.container(key="card_sig_doc"):
+        card_label("Blok 1 · Isi dokumen (message)", "g")
+        dokumen_in = st.text_area(
+            "Isi dokumen",
+            value=st.session_state.sv_sig_text,
+            placeholder="Tulis atau tempel isi dokumen yang akan ditandatangani...",
+            height=110,
+            label_visibility="collapsed",
+            key="w_sig_text",
+            on_change=sync,
+            args=("sig_text",),
+        )
+
+      with st.container(key="card_sig_digits"):
+        card_label("Blok 2 · Panjang digit prima p &amp; q (1–24 digit)", "g")
+        c_sp, c_sq = st.columns(2, gap="medium")
+        with c_sp:
+          sig_dp = st.number_input(
+              "Digit prima p", min_value=1, max_value=24, step=1,
+              value=int(st.session_state.sv_sig_digit_p), key="w_sig_digit_p",
+              on_change=sync, args=("sig_digit_p",),
+          )
+        with c_sq:
+          sig_dq = st.number_input(
+              "Digit prima q", min_value=1, max_value=24, step=1,
+              value=int(st.session_state.sv_sig_digit_q), key="w_sig_digit_q",
+              on_change=sync, args=("sig_digit_q",),
+          )
+
+      if st.button(
+          "✍️ Bangkitkan kunci & tandatangani dokumen",
+          type="primary",
+          use_container_width=True,
+      ):
+        if not dokumen_in.strip():
+          st.error("Isi dokumen tidak boleh kosong.")
+        elif sig_dp == 1 and sig_dq == 1:
+          st.error(
+              "Kombinasi 1 digit untuk p dan q menghasilkan n ≤ 35 (syarat blok"
+              " 3-digit: n > 999)."
+          )
+        else:
+          kunci = bangkitkan_kunci(int(sig_dp), int(sig_dq))
+          st.session_state.sig_result = tandatangani(dokumen_in, kunci)
+
+      sig_res = st.session_state.sig_result
+      with st.container(key="card_sig_out"):
+        card_label("Blok 3 · Tanda tangan digital (Sᵢ = Hᵢ^d mod n)", "g")
+        if sig_res:
+          copy_tile("Tanda tangan digital (Sᵢ)", " ".join(sig_res["blok_s"]), "g", highlight=True)
+        else:
+          st.markdown(
+              '<div class="mono-scroll" style="color:#34d399;font-weight:600;'
+              'border-color:rgba(52,211,153,0.35);margin-bottom:6px;">'
+              "Tanda tangan digital akan muncul di sini...</div>",
+              unsafe_allow_html=True,
+          )
+
+      if sig_res:
+
+        def kirim_ke_verifikasi():
+          r = st.session_state.sig_result
+          set_field("ver_text", r["dokumen"])
+          set_field("ver_sig", " ".join(r["blok_s"]))
+          set_field("ver_e", str(r["e"]))
+          set_field("ver_n", str(r["n"]))
+          st.session_state.ver_result = None
+          st.session_state.ver_note = ""
+
+        st.button(
+            "↘ Kirim dokumen, tanda tangan & kunci publik ke penerima",
+            use_container_width=True,
+            on_click=kirim_ke_verifikasi,
+        )
+
+    with s_right:
+      with st.container(key="card_sig_params"):
+        card_label("Digest, parameter &amp; kunci", "g")
+        if sig_res:
+          copy_tile("Digest SHA-256 (hex)", sig_res["digest_hex"], "g")
+          copy_tile("Digest dalam desimal (78 digit)", sig_res["digest_dec"], "s")
+          copy_tile(
+              f"Blok digest 3 digit (Hᵢ) · {DIGEST_BLOK} blok",
+              " ".join(sig_res["blok_h"]), "s",
+          )
+          g1, g2 = st.columns(2)
+          with g1:
+            copy_tile("p terpilih", sig_res["p"], "g")
+            copy_tile("n (p × q)", sig_res["n"], "s")
+            copy_tile("e (eksponen publik)", sig_res["e"], "g")
+          with g2:
+            copy_tile("q terpilih", sig_res["q"], "g")
+            copy_tile("m = (p − 1)(q − 1)", sig_res["m"], "s")
+            copy_tile("d (eksponen privat)", sig_res["d"], "g")
+          k1, k2 = st.columns(2)
+          with k1:
+            copy_tile("Kunci privat (d, n) · untuk menandatangani", f"({sig_res['d']}, {sig_res['n']})", "g", highlight=True)
+          with k2:
+            copy_tile("Kunci publik (e, n) · untuk verifikasi", f"({sig_res['e']}, {sig_res['n']})", "s")
+        else:
+          st.markdown(
+              '<div class="empty-note">Tulis isi dokumen dan jumlah digit prima di sebelah kiri, '
+              "lalu tekan <b>Bangkitkan kunci &amp; tandatangani dokumen</b> untuk melihat "
+              "digest SHA-256, blok H<sub>i</sub>, nilai <i>p, q, n, m, e, d</i>, "
+              "dan tanda tangan digitalnya.</div>",
+              unsafe_allow_html=True,
+          )
+
+    st.markdown('<div class="sig-sep"></div>', unsafe_allow_html=True)
+
+    # ------------------------------ SISI PENERIMA --------------------------------
+    st.markdown(
+        '<div class="sig-head"><div class="num">B</div><div>'
+        "<h3>Sisi penerima · Verifikasi dokumen</h3>"
+        "<p>Hash dokumen dihitung ulang, lalu dicocokkan dengan hasil dekripsi tanda tangan memakai kunci publik (e, n).</p>"
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
+    v_left, v_right = st.columns([1.05, 1], gap="large")
+
+    with v_left:
+      with st.container(key="card_ver_doc"):
+        card_label("Blok 1 · Dokumen yang diterima", "g")
+        ver_doc_in = st.text_area(
+            "Dokumen diterima",
+            value=st.session_state.sv_ver_text,
+            placeholder="Isi dokumen yang diterima (ubah sedikit untuk menguji manipulasi)...",
+            height=110,
+            label_visibility="collapsed",
+            key="w_ver_text",
+            on_change=sync,
+            args=("ver_text",),
+        )
+
+      with st.container(key="card_ver_sig"):
+        card_label("Blok 2 · Tanda tangan digital (pisahkan dengan spasi)", "g")
+        ver_sig_in = st.text_input(
+            "Tanda tangan",
+            value=st.session_state.sv_ver_sig,
+            placeholder="Contoh: 1873 402 5521 ...",
+            label_visibility="collapsed",
+            key="w_ver_sig",
+            on_change=sync,
+            args=("ver_sig",),
+        )
+
+      with st.container(key="card_ver_en"):
+        card_label("Blok 3 · Kunci publik penanda tangan (e, n)", "g")
+        col_e, col_n2 = st.columns(2, gap="medium")
+        with col_e:
+          ver_e_in = st.text_input(
+              "Nilai e", value=st.session_state.sv_ver_e, placeholder="Masukkan e...",
+              key="w_ver_e", on_change=sync, args=("ver_e",),
+          )
+        with col_n2:
+          ver_n_in = st.text_input(
+              "Nilai n", value=st.session_state.sv_ver_n, placeholder="Masukkan n...",
+              key="w_ver_n", on_change=sync, args=("ver_n",),
+          )
+
+      if st.button("🔍 Verifikasi tanda tangan", type="primary", use_container_width=True):
+        st.session_state.ver_note = ""
+        try:
+          st.session_state.ver_result = verifikasi(ver_doc_in, ver_sig_in, ver_e_in, ver_n_in)
+        except ValueError as err:
+          st.session_state.ver_result = None
+          st.error(str(err))
+
+      def simulasi_manipulasi():
+        teks = st.session_state.sv_ver_text
+        if not teks:
+          st.session_state.ver_note = "Isi dokumen yang diterima masih kosong."
+          return
+        posisi = [i for i, c in enumerate(teks) if c.isalnum()] or list(range(len(teks)))
+        i = random.choice(posisi)
+        lama = teks[i]
+        if lama.isdigit():
+          baru = str((int(lama) + random.randint(1, 9)) % 10)
+        elif lama.isalpha():
+          huruf = "abcdefghijklmnopqrstuvwxyz"
+          baru = random.choice([h for h in huruf if h != lama.lower()])
+          baru = baru.upper() if lama.isupper() else baru
+        else:
+          baru = "#" if lama != "#" else "*"
+        teks_baru = teks[:i] + baru + teks[i + 1 :]
+        set_field("ver_text", teks_baru)
+        st.session_state.ver_note = (
+            f"Simulasi manipulasi: karakter ke-{i + 1} '{lama}' diganti menjadi '{baru}'."
+        )
+        try:
+          st.session_state.ver_result = verifikasi(
+              teks_baru,
+              st.session_state.sv_ver_sig,
+              st.session_state.sv_ver_e,
+              st.session_state.sv_ver_n,
+          )
+        except ValueError:
+          st.session_state.ver_result = None
+
+      def pulihkan_dokumen():
+        r = st.session_state.sig_result
+        if not r:
+          return
+        set_field("ver_text", r["dokumen"])
+        st.session_state.ver_note = "Dokumen dikembalikan ke isi asli dari penanda tangan."
+        try:
+          st.session_state.ver_result = verifikasi(
+              r["dokumen"],
+              st.session_state.sv_ver_sig,
+              st.session_state.sv_ver_e,
+              st.session_state.sv_ver_n,
+          )
+        except ValueError:
+          st.session_state.ver_result = None
+
+      b1, b2 = st.columns(2, gap="small")
+      with b1:
+        st.button(
+            "🧪 Simulasikan manipulasi", use_container_width=True,
+            on_click=simulasi_manipulasi,
+        )
+      with b2:
+        st.button(
+            "↺ Pulihkan dokumen asli", use_container_width=True,
+            on_click=pulihkan_dokumen, disabled=not st.session_state.sig_result,
+        )
+
+    with v_right:
+      with st.container(key="card_ver_out"):
+        card_label("Hasil verifikasi", "g")
+        ver_res = st.session_state.ver_result
+        if st.session_state.ver_note:
+          st.markdown(
+              f'<div class="tamper-note">{html.escape(st.session_state.ver_note)}</div>',
+              unsafe_allow_html=True,
+          )
+        if ver_res:
+          if ver_res["valid"]:
+            st.markdown(
+                '<div class="verdict ok"><div class="ic">✅</div><div>'
+                "<b>Tanda tangan VALID</b>"
+                "<small>Hash dokumen yang diterima sama persis dengan hasil dekripsi tanda tangan. "
+                "Dokumen asli dan benar ditandatangani oleh pemilik kunci privat.</small>"
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
+          else:
+            st.markdown(
+                '<div class="verdict bad"><div class="ic">⛔</div><div>'
+                "<b>Tanda tangan TIDAK VALID</b>"
+                f"<small>{ver_res['beda']} dari {DIGEST_BLOK} blok digest berbeda. "
+                "Artinya dokumen sudah dimanipulasi di tengah jalan, atau tanda tangan / "
+                "kunci publik yang dipakai tidak cocok.</small>"
+                "</div></div>",
+                unsafe_allow_html=True,
+            )
+          copy_tile("Hash dokumen diterima (dihitung ulang)", ver_res["digest_hex"], "g")
+          copy_tile("Hasil dekripsi tanda tangan (Sᵢ^e mod n)", ver_res["hex_dari_sig"], "s")
+          copy_tile("Blok Hᵢ dari dokumen diterima", " ".join(ver_res["blok_hitung"]), "s")
+          copy_tile("Blok Hᵢ dari tanda tangan", " ".join(ver_res["blok_dari_sig"]), "s")
+        else:
+          st.markdown(
+              '<div class="empty-note">Kirim hasil dari sisi penanda tangan, atau isi dokumen, '
+              "tanda tangan, serta kunci publik <b>(e, n)</b> secara manual, lalu tekan "
+              "<b>Verifikasi tanda tangan</b>. Coba juga <b>Simulasikan manipulasi</b> "
+              "untuk melihat tanda tangan menjadi tidak valid.</div>",
               unsafe_allow_html=True,
           )
 
@@ -1295,6 +1765,19 @@ with st.container(key="sheet"):
           <p>Dengan <code>P = C^d mod n</code> blok kembali ke bentuk semula, lalu ditambah 27 dan dikonversi menjadi huruf.</p></div>
   </div>
 
+  <div class="sec-head">
+      <span class="sec-eyebrow">Tanda tangan digital</span>
+      <h2>Tiga langkah menjamin keaslian dokumen.</h2>
+  </div>
+  <div class="grid g3">
+      <div class="info-card"><div class="step">1</div><h4>Hash dokumen</h4>
+          <p>Isi dokumen diproses dengan fungsi hash <code>SHA-256</code> menjadi digest, yaitu ringkasan unik dokumen. Satu huruf berubah, digest ikut berubah total.</p></div>
+      <div class="info-card"><div class="step">2</div><h4>Kunci dengan kunci privat</h4>
+          <p>Digest dipotong menjadi blok 3 digit lalu dikunci dengan kunci privat penanda tangan: <code>S = H^d mod n</code>. Hasilnya adalah tanda tangan digital.</p></div>
+      <div class="info-card"><div class="step">3</div><h4>Verifikasi penerima</h4>
+          <p>Penerima menghitung ulang hash dokumen dan membandingkannya dengan <code>S^e mod n</code> memakai kunci publik. Jika berbeda, dokumen sudah dimanipulasi.</p></div>
+  </div>
+
   <span id="tim" class="anchor"></span>
   <div class="sec-head">
       <span class="sec-eyebrow">Tim</span>
@@ -1319,6 +1802,10 @@ with st.container(key="sheet"):
           <p>Kode ASCII cetak (32–126) dikurangi 27 menjadi 5–99, sehingga selalu 2 digit. Digit digabung lalu dipotong per 3 agar setiap blok lebih kecil dari n (syarat n &gt; 999).</p></details>
       <details><summary>Mana kunci publik dan mana kunci privat?</summary>
           <p>Kunci publik adalah pasangan (e, n) untuk mengenkripsi. Kunci privat adalah (d, n) untuk mendekripsi. Bagikan hanya yang publik.</p></details>
+      <details><summary>Apa bedanya enkripsi dengan tanda tangan digital?</summary>
+          <p>Enkripsi memakai kunci publik untuk menyandikan dan kunci privat untuk membuka, tujuannya kerahasiaan. Tanda tangan digital kebalikannya: digest dokumen dikunci dengan kunci privat dan dicek dengan kunci publik, tujuannya keaslian dan keutuhan dokumen.</p></details>
+      <details><summary>Kenapa yang ditandatangani digest, bukan dokumennya langsung?</summary>
+          <p>Digest SHA-256 selalu berukuran tetap (256 bit) berapa pun panjang dokumennya, jadi prosesnya cepat. Fungsi hash juga sangat sensitif: perubahan satu karakter saja menghasilkan digest yang sama sekali berbeda, sehingga manipulasi langsung ketahuan.</p></details>
       <details><summary>Kenapa hasil dekripsi gagal atau berbentuk aneh?</summary>
           <p>Biasanya nilai d atau n tidak cocok dengan kunci yang dipakai saat enkripsi, atau ciphertext terpotong. Gunakan tombol kirim ke tab Decrypt agar nilainya terisi otomatis.</p></details>
       <details><summary>Karakter apa saja yang didukung?</summary>
